@@ -4,23 +4,18 @@ namespace AppBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\User;
 
 class LoadUsers extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
-    private $container;
+    use ContainerAwareTrait;
 
     public function getOrder()
     {
         return 10;
-    }
-
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 
     public function load(ObjectManager $manager)
@@ -33,7 +28,6 @@ class LoadUsers extends AbstractFixture implements OrderedFixtureInterface, Cont
             $user->setEmail('user'.$i.'@example.com');
             $user->setRoles(array('ROLE_USER'));
             $user->setEnabled(true);
-            $user->setContract('contract'.($i % 5).'.pdf');
 
             $plainPassword = 'password'.$i;
             $encodedPassword = $encoder->encodePassword($user, $plainPassword);
@@ -49,7 +43,6 @@ class LoadUsers extends AbstractFixture implements OrderedFixtureInterface, Cont
         $user->setEmail('john.smith@example.com');
         $user->setRoles(array('ROLE_ADMIN'));
         $user->setEnabled(true);
-        $user->setContract('contract0.pdf');
         $user->setPassword($encoder->encodePassword($user, '1234'));
         $manager->persist($user);
         $manager->flush();

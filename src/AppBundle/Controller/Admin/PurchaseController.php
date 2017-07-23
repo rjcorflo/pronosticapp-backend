@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Admin;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use JavierEguiluz\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
 
 /**
@@ -17,15 +19,15 @@ class PurchaseController extends BaseAdminController
     {
         /* @var EntityManager */
         $em = $this->getDoctrine()->getManagerForClass($this->entity['class']);
-        /* @var DoctrineQueryBuilder */
+
+        /* @var QueryBuilder */
         $queryBuilder = $em->createQueryBuilder()
             ->select('entity')
             ->from($this->entity['class'], 'entity')
             ->join('entity.buyer', 'buyer')
             ->orWhere('LOWER(buyer.username) LIKE :query')
             ->orWhere('LOWER(buyer.email) LIKE :query')
-            ->setParameter('query', '%'.strtolower($searchQuery).'%')
-        ;
+            ->setParameter('query', '%'.strtolower($searchQuery).'%');
 
         if (!empty($dqlFilter)) {
             $queryBuilder->andWhere($dqlFilter);

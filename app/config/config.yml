@@ -2,7 +2,8 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
-    - { resource: admin/ }
+    - { resource: admin/design.yml }
+#    - { resource: admin/ }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -10,7 +11,6 @@ parameters:
     locale: en
     app.path.product_images: /uploads/images/products
     app.path.user_contracts: /uploads/files/user/contracts
-
 
 framework:
     #esi: ~
@@ -70,7 +70,6 @@ vich_uploader:
             uri_prefix: '%app.path.user_contracts%'
             upload_destination: '%kernel.root_dir%/../web/uploads/files/user/contracts'
 
-
 fos_user:
     db_driver: orm
     firewall_name: main
@@ -86,3 +85,40 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
+
+easy_admin:
+    design:
+        menu:
+            - { label: Players }
+            - { entity: Player, icon: user }
+            - Token
+            - Community
+            - Participant
+            - { label: Teams data }
+            - Stadium
+            - { label: Users }
+            - User
+    entities:
+        Token:
+            class: AppBundle\Entity\Token
+        Player:
+            class: AppBundle\Entity\Player
+        Community:
+            class: AppBundle\Entity\Community
+        Participant:
+            class: AppBundle\Entity\Participant
+        User:
+            class: AppBundle\Entity\User
+        Stadium:
+            class: AppBundle\Entity\Stadium
+            form:
+                fields:
+                    - { property: 'imageFile', type: 'vich_image', type_options: { required: true } }
+        Team:
+            class: AppBundle\Entity\Team
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: Application Migrations

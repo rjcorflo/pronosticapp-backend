@@ -24,22 +24,21 @@ menu.product.list: List Products
 menu.product.add:  Add Product
 menu.customer:     Customers
 menu.purchase:     Purchases
-menu.about:        About EasyAdmin
-menu.about.home:   Project Home
-menu.about.docs:   Documentation
-menu.about.issues: Report Issues
 
 # We let EasyAdmin generate the rest of the backend labels
 # (they are translated following the 2) method)
 # ------------------------------------------------------------------------------
 
 # entity names, labels and titles
-Categories: Categories
-Category: Category
-Customers: Customers
-Product: Product
-Products: Products
-User: User
+Community: Comunidad
+Token: Token
+Player: Jugador
+Participant: Participante
+User: Usuario
+Stadium: Estadio
+Team: Equipo
+Private: Privada
+Participants: Participaciones
 
 # entity properties
 Attachments: Attachments
@@ -72,6 +71,8 @@ Shipping: Shipping
 Tags: Tags
 Total: Total
 Username: Username
+Created: Created at
+Updated: Updated at
 
 # help messages
 EAN-13 valid code. Leave empty if unknown.: EAN-13 valid code. Leave empty if unknown.

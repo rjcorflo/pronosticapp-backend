@@ -8,18 +8,17 @@ menu.product.list: Listado de Productos
 menu.product.add:  Añadir Producto
 menu.customer:     Clientes
 menu.purchase:     Ventas
-menu.about:        Sobre EasyAdmin
-menu.about.home:   Sitio web oficial
-menu.about.docs:   Documentación
-menu.about.issues: Informar de errores
 
 # entity names, labels and titles
-Categories: Categorías
-Category: Categoría
-Customers: Clientes
-Product: Producto
-Products: Productos
+Community: Comunidad
+Token: Token
+Player: Jugador
+Participant: Participante
 User: Usuario
+Stadium: Estadio
+Team: Equipo
+Private: Privada
+Participants: Participaciones
 
 # entity properties
 Attachments: Archivos adjuntos
@@ -52,21 +51,12 @@ Shipping: Envío
 Tags: Etiquetas
 Total: Total
 Username: Nombre de usuario
+Created: Creado el
+Updated: Actualizado el
 
 # help messages
-EAN-13 valid code. Leave empty if unknown.: Introduce un código EAN-13 válido. Déjalo vacío si no dispones del código.
 
 # messages that contain variables
 'Product %entity_label%': 'Producto %entity_label%'
 
 # misc. messages
-Account Information: Información de la cuenta
-Advanced Settings: Opciones avanzadas
-Basic information: Información básica
-Contact Information: Información de contacto
-Contract file: Archivo del contrato
-Delivery Details: Información de la entrega
-Legal Information: Información legal
-Product Details: Información del producto
-Purchase Details: Información de la compra
-Transactions History: Historial de transacciones
