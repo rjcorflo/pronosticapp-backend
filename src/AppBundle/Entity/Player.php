@@ -76,7 +76,7 @@ class Player
 
     /**
      * @var Participant[]
-     * 
+     *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Participant", mappedBy="player")
      */
     private $participations;

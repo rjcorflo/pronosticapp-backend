@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="stadiums")
- * @Vich\Uploadable()
  */
 class Stadium
 {
@@ -46,23 +43,11 @@ class Stadium
     private $color;
 
     /**
-     * It only stores the name of the image associated with the product.
+     * @var Image
      *
-     * @ORM\Column(type="string", length=255)
-     *
-     * @var string
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Image", fetch="EAGER")
      */
     private $image;
-
-    /**
-     * This unmapped property stores the binary contents of the image file
-     * associated with the product.
-     *
-     * @Vich\UploadableField(mapping="product_images", fileNameProperty="image")
-     *
-     * @var File
-     */
-    private $imageFile;
 
     /**
      * Get id
@@ -149,11 +134,11 @@ class Stadium
     /**
      * Set image
      *
-     * @param string $image
+     * @param \AppBundle\Entity\Image $image
      *
      * @return Stadium
      */
-    public function setImage($image)
+    public function setImage(Image $image = null)
     {
         $this->image = $image;
 
@@ -163,26 +148,10 @@ class Stadium
     /**
      * Get image
      *
-     * @return string
+     * @return \AppBundle\Entity\Image
      */
     public function getImage()
     {
         return $this->image;
-    }
-
-    /**
-     * @return File
-     */
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
-
-    /**
-     * @param File $imageFile
-     */
-    public function setImageFile(File $imageFile)
-    {
-        $this->imageFile = $imageFile;
     }
 }

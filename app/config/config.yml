@@ -9,7 +9,7 @@ imports:
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    app.path.product_images: /uploads/images/products
+    app.path.images: /uploads/images
     app.path.user_contracts: /uploads/files/user/contracts
 
 framework:
@@ -63,12 +63,9 @@ doctrine:
 vich_uploader:
     db_driver: orm
     mappings:
-        product_images:
-            uri_prefix: '%app.path.product_images%'
-            upload_destination: '%kernel.root_dir%/../web/uploads/images/products'
-        user_contracts:
-            uri_prefix: '%app.path.user_contracts%'
-            upload_destination: '%kernel.root_dir%/../web/uploads/files/user/contracts'
+        images:
+            uri_prefix: '%app.path.images%'
+            upload_destination: '%kernel.root_dir%/../web/uploads/images'
 
 fos_user:
     db_driver: orm
@@ -88,6 +85,7 @@ swiftmailer:
 
 easy_admin:
     design:
+        form_theme: horizontal
         menu:
             - { label: Players }
             - { entity: Player, icon: user }
@@ -98,11 +96,30 @@ easy_admin:
             - Stadium
             - { label: Users }
             - User
+            - { label: Other }
+            - Image
     entities:
         Token:
             class: AppBundle\Entity\Token
         Player:
             class: AppBundle\Entity\Player
+        Image:
+            class: AppBundle\Entity\Image
+            form:
+                list:
+                    actions:
+                        - { name: 'show', label: '', icon: 'search' }
+                        - { name: 'edit', label: '', icon: 'edit' }
+                        - { name: 'delete', label: '', icon: 'trash' }
+                    fields:
+                        - id
+                        - imageType
+                        - description
+                        - { property: 'image', type: 'image', base_path: '%app.path.images%' }
+                fields:
+                    - imageType
+                    - description
+                    - { property: 'imageFile', type: 'vich_image' }
         Community:
             class: AppBundle\Entity\Community
         Participant:
@@ -111,9 +128,21 @@ easy_admin:
             class: AppBundle\Entity\User
         Stadium:
             class: AppBundle\Entity\Stadium
+            list:
+                actions:
+                    - { name: 'show', label: '', icon: 'search' }
+                    - { name: 'edit', label: '', icon: 'edit' }
+                    - { name: 'delete', label: '', icon: 'trash' }
+                fields:
+                    - id
+                    - name
+                    - alias
+                    - color
             form:
                 fields:
-                    - { property: 'imageFile', type: 'vich_image', type_options: { required: true } }
+                    - name
+                    - alias
+                    - color
         Team:
             class: AppBundle\Entity\Team
 
