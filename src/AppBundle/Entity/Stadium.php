@@ -154,4 +154,9 @@ class Stadium
     {
         return $this->image;
     }
+
+    public function getStadiumImage()
+    {
+        return $this->getImage()->getImage();
+    }
 }
