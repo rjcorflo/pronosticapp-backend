@@ -92,17 +92,31 @@ easy_admin:
             - Token
             - Community
             - Participant
+            - { lable: Matchday }
+            - Competition
+            - Phase
+            - Matchday
+            - Match
+            - { label: Classifications }
+            - Forecast
+            - MatchdayClassification
+            - GeneralClassification
             - { label: Teams data }
+            - Team
             - Stadium
             - { label: Users }
             - User
             - { label: Other }
             - Image
     entities:
-        Token:
-            class: AppBundle\Entity\Token
-        Player:
-            class: AppBundle\Entity\Player
+        Community:
+            class: AppBundle\Entity\Community
+        Competition:
+            class: AppBundle\Entity\Competition
+        Forecast:
+            class: AppBundle\Entity\Forecast
+        GeneralClassification:
+            class: AppBundle\Entity\GeneralClassification
         Image:
             class: AppBundle\Entity\Image
             form:
@@ -120,12 +134,18 @@ easy_admin:
                     - imageType
                     - description
                     - { property: 'imageFile', type: 'vich_image' }
-        Community:
-            class: AppBundle\Entity\Community
+        Match:
+            class: AppBundle\Entity\Match
+        Matchday:
+            class: AppBundle\Entity\Matchday
+        MatchdayClassification:
+            class: AppBundle\Entity\MatchdayClassification
         Participant:
             class: AppBundle\Entity\Participant
-        User:
-            class: AppBundle\Entity\User
+        Phase:
+            class: AppBundle\Entity\Phase
+        Player:
+            class: AppBundle\Entity\Player
         Stadium:
             class: AppBundle\Entity\Stadium
             list:
@@ -154,6 +174,10 @@ easy_admin:
                     - image
         Team:
             class: AppBundle\Entity\Team
+        Token:
+            class: AppBundle\Entity\Token
+        User:
+            class: AppBundle\Entity\User
 
 doctrine_migrations:
     dir_name: "%kernel.root_dir%/DoctrineMigrations"

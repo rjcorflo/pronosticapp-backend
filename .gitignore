@@ -39,3 +39,4 @@ var/data/*
 
 # Others
 .php_cs.cache
+php_errors.log

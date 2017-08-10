@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Competition.
+ * Class Phase.
  *
  * @ORM\Entity
- * @ORM\Table(name="competitions")
+ * @ORM\Table(name="phases")
  */
-class Competition
+class Phase
 {
     /**
      * @var int
@@ -36,11 +36,11 @@ class Competition
     private $alias;
 
     /**
-     * @var Image
+     * @var float
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Image", fetch="EAGER")
+     * @ORM\Column(type="float")
      */
-    private $image;
+    private $multiplierFactor;
 
     /**
      * Get id
@@ -57,7 +57,7 @@ class Competition
      *
      * @param string $name
      *
-     * @return Competition
+     * @return Phase
      */
     public function setName($name)
     {
@@ -81,7 +81,7 @@ class Competition
      *
      * @param string $alias
      *
-     * @return Competition
+     * @return Phase
      */
     public function setAlias($alias)
     {
@@ -101,31 +101,31 @@ class Competition
     }
 
     /**
-     * Set image
+     * Set multiplierFactor
      *
-     * @param \AppBundle\Entity\Image $image
+     * @param float $multiplierFactor
      *
-     * @return Competition
+     * @return Phase
      */
-    public function setImage(Image $image = null)
+    public function setMultiplierFactor($multiplierFactor)
     {
-        $this->image = $image;
+        $this->multiplierFactor = $multiplierFactor;
 
         return $this;
     }
 
     /**
-     * Get image
+     * Get multiplierFactor
      *
-     * @return \AppBundle\Entity\Image
+     * @return float
      */
-    public function getImage()
+    public function getMultiplierFactor()
     {
-        return $this->image;
+        return $this->multiplierFactor;
     }
 
-    public function getCompetitionImage()
+    public function __toString()
     {
-        return $this->getImage()->getImage();
+        return $this->getName();
     }
 }
