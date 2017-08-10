@@ -5,14 +5,11 @@ require 'recipe/symfony3.php';
 
 // Configuration
 
-set('repository', 'git@domain.com:username/repository.git');
-set('git_tty', true); // [Optional] Allocate tty for git on first deployment
+set('repository', 'https://github.com/rjcorflo/pronosticapp-backend');
+set('git_tty', false); // [Optional] Allocate tty for git on first deployment
 add('shared_files', []);
 add('shared_dirs', []);
 add('writable_dirs', []);
-
-
-// Hosts
 
 // Hosts
 host('solus-dev')
@@ -20,7 +17,7 @@ host('solus-dev')
     ->stage('development')
     ->roles('app')
     ->set('deploy_path', '~/applications/pronosticapp/development')
-    ->set('branch', 'dev-doctrine')
+    ->set('branch', 'dev')
     ->configFile('~/.ssh/config');
 
 
