@@ -128,4 +128,9 @@ class Competition
     {
         return $this->getImage()->getImage();
     }
+
+    public function __toString()
+    {
+        return $this->getName();
+    }
 }

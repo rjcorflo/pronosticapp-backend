@@ -92,7 +92,7 @@ easy_admin:
             - Token
             - Community
             - Participant
-            - { lable: Matchday }
+            - { label: Matchday }
             - Competition
             - Phase
             - Matchday
