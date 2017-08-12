@@ -4,12 +4,11 @@ namespace Deployer;
 require 'recipe/symfony3.php';
 
 // Configuration
-
 set('repository', 'https://github.com/rjcorflo/pronosticapp-backend');
 set('git_tty', false); // [Optional] Allocate tty for git on first deployment
 add('shared_files', []);
-add('shared_dirs', []);
-add('writable_dirs', []);
+add('shared_dirs', ['var/data']);
+set('writable_dirs', []);
 
 // Hosts
 host('solus-dev')

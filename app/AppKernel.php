@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
             new JavierEguiluz\Bundle\EasyAdminBundle\EasyAdminBundle(),
+            new SamJ\FractalBundle\SamJFractalBundle(),
             new AppBundle\AppBundle(),
         ];
 

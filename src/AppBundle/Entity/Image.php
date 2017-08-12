@@ -145,6 +145,11 @@ class Image
         return $this->imageFile;
     }
 
+    public function getUrl()
+    {
+        return '/uploads/images/' . $this->getImage();
+    }
+
     public function __toString()
     {
         return sprintf('%s - Filename: %s - Description: %s', $this->getImageType(), $this->getImage(), $this->getDescription());

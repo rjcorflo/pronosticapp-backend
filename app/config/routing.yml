@@ -1,6 +1,7 @@
-#app:
-#    resource: '@AppBundle/Controller/'
-#    type: annotation
+app:
+    resource: '@AppBundle/Controller/Api/'
+    type: annotation
+    prefix: /api/v1
 
 _homepage:
     path: /

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Extensions\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,9 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="communities")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Community
 {
+    use Timestampable;
+
     /**
      * @var int
      *
@@ -42,6 +46,13 @@ class Community
      * @ORM\Column(type="boolean")
      */
     private $private;
+
+    /**
+     * @var Image
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Image", fetch="EAGER")
+     */
+    private $image;
 
     /**
      * @var Participant[]
@@ -132,9 +143,38 @@ class Community
      *
      * @return boolean
      */
-    public function getPrivate()
+    public function isPrivate()
     {
         return $this->private;
+    }
+
+    /**
+     * Set image
+     *
+     * @param \AppBundle\Entity\Image $image
+     *
+     * @return Community
+     */
+    public function setImage(Image $image = null)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return \AppBundle\Entity\Image
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function getCommunityImage()
+    {
+        return $this->getImage()->getImage();
     }
 
     /**

@@ -31,16 +31,16 @@ class Stadium
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $alias;
+    private $color;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $color;
+    private $city;
 
     /**
      * @var Image
@@ -84,51 +84,45 @@ class Stadium
     }
 
     /**
-     * Set alias
-     *
-     * @param string $alias
-     *
-     * @return Stadium
-     */
-    public function setAlias($alias)
-    {
-        $this->alias = $alias;
-
-        return $this;
-    }
-
-    /**
-     * Get alias
-     *
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    /**
-     * Set color
-     *
-     * @param string $color
-     *
-     * @return Stadium
-     */
-    public function setColor($color)
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    /**
-     * Get color
-     *
      * @return string
      */
     public function getColor()
     {
         return $this->color;
+    }
+
+    /**
+     * @param string $color
+     * @return Stadium
+     */
+    public function setColor(string $color)
+    {
+        $this->color = $color;
+        return $this;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     *
+     * @return Stadium
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
     }
 
     /**
@@ -158,5 +152,10 @@ class Stadium
     public function getStadiumImage()
     {
         return $this->getImage()->getImage();
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

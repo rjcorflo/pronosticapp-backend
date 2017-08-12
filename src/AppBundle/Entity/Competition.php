@@ -36,6 +36,13 @@ class Competition
     private $alias;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $color;
+
+    /**
      * @var Image
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Image", fetch="EAGER")
@@ -98,6 +105,28 @@ class Competition
     public function getAlias()
     {
         return $this->alias;
+    }
+
+    /**
+     * Get color
+     *
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * Set color
+     *
+     * @param string $color
+     * @return Competition
+     */
+    public function setColor(string $color)
+    {
+        $this->color = $color;
+        return $this;
     }
 
     /**
