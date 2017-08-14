@@ -57,12 +57,10 @@ class PlayerController extends Controller implements TokenAuthenticatedControlle
      * @Rest\Post("/player/logout")
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @return ResponseInterface
      */
     public function logoutAction(
-        ServerRequestInterface $request,
-        ResponseInterface $response
+        ServerRequestInterface $request
     ): ResponseInterface {
         /**
          * @var Player $player
@@ -71,6 +69,8 @@ class PlayerController extends Controller implements TokenAuthenticatedControlle
 
         // Prepare result
         $message = new MessageResult();
+
+        $response = new Response();
 
         try {
             $tokenString = $request->getHeader('X-Auth-Token');
