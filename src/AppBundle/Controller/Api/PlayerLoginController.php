@@ -14,7 +14,6 @@ use AppBundle\Legacy\Util\Validation\Exception\ValidationException;
 use AppBundle\Legacy\Util\Validation\ValidatorInterface;
 use AppBundle\Legacy\WebResource\WebResourceGeneratorInterface;
 use AppBundle\Repository\PlayerRepository;
-use Doctrine\ORM\EntityRepository;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

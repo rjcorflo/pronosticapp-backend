@@ -2,14 +2,18 @@
 
 namespace AppBundle\Controller\Api;
 
+use AppBundle\Controller\TokenAuthenticatedController;
 use AppBundle\Entity\Participant;
 use AppBundle\Entity\Player;
+use AppBundle\Entity\Token;
 use AppBundle\Legacy\Util\General\ErrorCodes;
+use AppBundle\Legacy\Util\General\MessageResult;
 use AppBundle\Legacy\Util\General\ResponseGenerator;
 use AppBundle\Legacy\Util\Validation\Exception\ValidationException;
 use AppBundle\Legacy\Util\Validation\ValidatorInterface;
 use AppBundle\Legacy\WebResource\WebResourceGeneratorInterface;
 use AppBundle\Repository\ParticipantRepository;
+use Doctrine\ORM\EntityRepository;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,7 +25,7 @@ use Zend\Diactoros\Response;
  *
  * Expose player data.
  */
-class PlayerController extends Controller
+class PlayerController extends Controller implements TokenAuthenticatedController
 {
     use ResponseGenerator;
 
