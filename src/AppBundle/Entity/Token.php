@@ -62,7 +62,7 @@ class Token
      * @param Player $player
      * @return Token
      */
-    public function setUser(Player $player): Token
+    public function setPlayer(Player $player): Token
     {
         $this->player = $player;
         return $this;

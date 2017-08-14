@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class Participant.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ParticipantRepository")
  * @ORM\Table(name="participants")
  * @ORM\HasLifecycleCallbacks
  */

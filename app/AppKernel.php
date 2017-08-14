@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
             new JavierEguiluz\Bundle\EasyAdminBundle\EasyAdminBundle(),
             new SamJ\FractalBundle\SamJFractalBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
             new AppBundle\AppBundle(),
         ];
 

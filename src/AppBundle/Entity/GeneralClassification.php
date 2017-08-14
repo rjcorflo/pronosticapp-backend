@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class GeneralClassification.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\GeneralClassificationRepository")
  * @ORM\Table(name="general_classification")
  * @ORM\HasLifecycleCallbacks
  */

@@ -4,6 +4,9 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Community;
 use AppBundle\Entity\Player;
+use AppBundle\Legacy\Model\Exception\NotFoundException;
+use AppBundle\Legacy\Util\General\ErrorCodes;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -15,6 +18,18 @@ use Doctrine\ORM\EntityRepository;
 class CommunityRepository extends EntityRepository
 {
     /**
+     * Count by criteria.
+     *
+     * TODO remove
+     * @param array $criteria
+     * @return int
+     */
+    public function countBy(array $criteria)
+    {
+        return $this->getEntityManager()->getUnitOfWork()->getEntityPersister($this->getEntityName())->count($criteria);
+    }
+
+    /**
      * Check if a community name exists.
      *
      * @param string $name
@@ -22,7 +37,7 @@ class CommunityRepository extends EntityRepository
      */
     public function checkIfNameExists(string $name) : bool
     {
-
+        return $this->countBy(['name' => strtolower($name)]) > 0;
     }
 
     /**
@@ -34,7 +49,20 @@ class CommunityRepository extends EntityRepository
      */
     public function findByName(string $name): Community
     {
+        /** @var Community $community */
+        $community = $this->findOneBy(['name' => $name]);
 
+        if ($community === null) {
+            $exception = new NotFoundException();
+            $exception->addMessageWithCode(
+                ErrorCodes::ENTITY_NOT_FOUND,
+                'No existe una comunidad con ese nombre'
+            );
+
+            throw $exception;
+        }
+
+        return $community;
     }
 
     /**
@@ -47,7 +75,29 @@ class CommunityRepository extends EntityRepository
      */
     public function getAllPublicCommunities(Player $player = null) : array
     {
+        if ($player === null) {
+            /** @var Community[] $communities */
+            $communities = $this->findBy(['private' === false]);
+            //$communities = R::find(static::ENTITY, 'private = 0 ORDER BY name ASC');
 
+        } else {
+            /** @var Community[] $communities */
+            $qb = $this->getEntityManager()->createQuery(
+                'SELECT c FROM AppBundle:Community c
+                  WHERE c.private = 0
+                    AND c.id NOT IN (SELECT com.id
+                                       FROM AppBundle:Participant p
+                                       JOIN p.community com
+                                       JOIN p.player pl
+                                      WHERE pl.id = :player_id
+                                       
+                    )'
+            )->setParameter('player', $player->getId());
+
+            $communities = $qb->getResult();
+        }
+
+        return $communities;
     }
 
     /**

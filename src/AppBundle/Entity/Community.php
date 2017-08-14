@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class Community.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CommunityRepository")
  * @ORM\Table(name="communities")
  * @ORM\HasLifecycleCallbacks()
  */

@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Community;
 use AppBundle\Entity\Participant;
 use AppBundle\Entity\Player;
+use AppBundle\Legacy\Model\Exception\NotFoundException;
 use Doctrine\ORM\EntityRepository;
 
 /**

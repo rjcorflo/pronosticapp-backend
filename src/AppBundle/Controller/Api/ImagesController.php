@@ -6,8 +6,8 @@ use AppBundle\Entity\Image;
 use AppBundle\Legacy\Util\General\ResponseGenerator;
 use AppBundle\Legacy\Util\Validation\ValidatorInterface;
 use AppBundle\Legacy\WebResource\WebResourceGeneratorInterface;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Http\Message\ResponseInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Zend\Diactoros\Response;
 
@@ -45,9 +45,8 @@ class ImagesController extends Controller
     /**
      * List images.
      *
-     * @Route("/images/list")
+     * @Rest\Get("/images/list")
      *
-     * @param ResponseInterface $response
      * @return ResponseInterface
      */
     public function listImagesAction(): ResponseInterface

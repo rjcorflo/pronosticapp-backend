@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class Matchday.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MatchdayRepository")
  * @ORM\Table(name="matchdays")
  * @ORM\HasLifecycleCallbacks
  */
