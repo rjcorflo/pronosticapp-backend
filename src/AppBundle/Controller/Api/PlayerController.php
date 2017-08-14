@@ -10,6 +10,7 @@ use AppBundle\Legacy\Util\Validation\Exception\ValidationException;
 use AppBundle\Legacy\Util\Validation\ValidatorInterface;
 use AppBundle\Legacy\WebResource\WebResourceGeneratorInterface;
 use AppBundle\Repository\ParticipantRepository;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -47,7 +48,60 @@ class PlayerController extends Controller
     }
 
     /**
+     * Logout for user.
+     *
+     * @Rest\Post("/player/logout")
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function logoutAction(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
+        /**
+         * @var Player $player
+         */
+        $player = $request->getAttribute('player');
+
+        // Prepare result
+        $message = new MessageResult();
+
+        try {
+            $tokenString = $request->getHeader('X-Auth-Token');
+
+            /** @var EntityRepository $tokenRepository */
+            $tokenRepository = $this->getDoctrine()->getManager()->getRepository(Token::class);
+            $token = $tokenRepository->findOneBy(['tokenString' => $tokenString[0]]);
+
+            $this->getDoctrine()->getManager()->remove($token);
+            $this->getDoctrine()->getManager()->flush();
+
+            $message->setDescription(sprintf("Jugador %s ha hecho logout correctamente", $player->getNickname()));
+
+            $resource = $this->resourceGenerator->createMessageResource($message);
+
+            $response = $this->generateJsonCorrectResponse($response, $resource);
+        } catch (\Exception $e) {
+            $exception = new \Exception(
+                sprintf(
+                    "Jugador %s no ha podido hacer logout correctamente",
+                    $player->getNickname()
+                ),
+                $e
+            );
+
+            $response = $this->generateJsonErrorResponse($response, $exception);
+        }
+
+        return $response;
+    }
+
+    /**
      * Get info about player.
+     *
+     * @Rest\Get("/player/info")
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
@@ -68,6 +122,8 @@ class PlayerController extends Controller
 
     /**
      * List player communities.
+     *
+     * @Rest\Post("/player/communities")
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface

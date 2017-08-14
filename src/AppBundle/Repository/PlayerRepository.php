@@ -62,8 +62,9 @@ class PlayerRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('p');
 
-        $qb->where($qb->expr()->eq('p.nickname', $name))
-            ->orWhere($qb->expr()->eq('p.email', $name));
+        $qb->where($qb->expr()->eq('p.nickname', ':name'))
+            ->orWhere($qb->expr()->eq('p.email', ':name'))
+            ->setParameter('name', $name);
 
         try {
             /** @var Player $player */

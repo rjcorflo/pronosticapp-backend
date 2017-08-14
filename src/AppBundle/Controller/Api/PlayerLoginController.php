@@ -15,6 +15,7 @@ use AppBundle\Legacy\Util\Validation\ValidatorInterface;
 use AppBundle\Legacy\WebResource\WebResourceGeneratorInterface;
 use AppBundle\Repository\PlayerRepository;
 use Doctrine\ORM\EntityRepository;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -52,6 +53,10 @@ class PlayerLoginController extends Controller
     }
 
     /**
+     * Register a player.
+     *
+     * @Rest\Post("/player/register")
+     *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
@@ -86,11 +91,10 @@ class PlayerLoginController extends Controller
             }
 
             // Initialize Player data
-            /** @var Player $player */
             $player = new Player();
             $player->setNickname($nickname);
             $player->setEmail($email);
-            $player->setPassword($password);
+            $player->setPassword(password_hash($password, PASSWORD_BCRYPT));
             $player->setFirstName($firstName);
             $player->setLastName($lastName);
             $player->setAvatar($idAvatar);
@@ -136,6 +140,8 @@ class PlayerLoginController extends Controller
 
     /**
      * Check existence of player via mail or username.
+     *
+     * @Rest\Post("/player/exist")
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
@@ -206,6 +212,8 @@ class PlayerLoginController extends Controller
     /**
      * Login for user.
      *
+     * @Rest\Post("/player/login")
+     *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
@@ -251,6 +259,7 @@ class PlayerLoginController extends Controller
             $token = new Token();
             $token->generateRandomToken();
             $token->setPlayer($player);
+            $token->setExpireAt(new \DateTime());
 
             $this->getDoctrine()->getManager()->persist($token);
             $this->getDoctrine()->getManager()->flush();
@@ -260,55 +269,6 @@ class PlayerLoginController extends Controller
             $response = $this->generateJsonCorrectResponse($response, $resource);
         } catch (\Exception $e) {
             $response = $this->generateJsonErrorResponse($response, $e);
-        }
-
-        return $response;
-    }
-
-    /**
-     * Logout for user.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     */
-    public function logout(
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ): ResponseInterface {
-        /**
-         * @var Player $player
-         */
-        $player = $request->getAttribute('player');
-
-        // Prepare result
-        $message = new MessageResult();
-
-        try {
-            $tokenString = $request->getHeader('X-Auth-Token');
-
-            /** @var EntityRepository $tokenRepository */
-            $tokenRepository = $this->getDoctrine()->getManager()->getRepository(Token::class);
-            $token = $tokenRepository->findOneBy(['tokenString' => $tokenString[0]]);
-
-            $this->getDoctrine()->getManager()->remove($token);
-            $this->getDoctrine()->getManager()->flush();
-
-            $message->setDescription(sprintf("Jugador %s ha hecho logout correctamente", $player->getNickname()));
-
-            $resource = $this->resourceGenerator->createMessageResource($message);
-
-            $response = $this->generateJsonCorrectResponse($response, $resource);
-        } catch (\Exception $e) {
-            $exception = new \Exception(
-                sprintf(
-                    "Jugador %s no ha podido hacer logout correctamente",
-                    $player->getNickname()
-                ),
-                $e
-            );
-
-            $response = $this->generateJsonErrorResponse($response, $exception);
         }
 
         return $response;
