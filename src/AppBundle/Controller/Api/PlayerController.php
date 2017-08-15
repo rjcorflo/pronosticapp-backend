@@ -156,7 +156,7 @@ class PlayerController extends Controller implements TokenAuthenticatedControlle
                     $exception = new ValidationException('Error validando la fecha');
                     $exception->addMessageWithCode(
                         ErrorCodes::INCORRECT_DATE,
-                        'Error parseando el campo fecha recibido. Debe venir en formato dd-MM-yyyy.'
+                        'Error parseando el campo fecha recibido. Debe venir en formato yyyy-MM-dd HH:mi:ss.'
                     );
                     throw $exception;
                 }

@@ -7,6 +7,7 @@ use AppBundle\Entity\Player;
 use AppBundle\Legacy\Model\Exception\NotFoundException;
 use AppBundle\Legacy\Util\General\ErrorCodes;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -37,7 +38,15 @@ class CommunityRepository extends EntityRepository
      */
     public function checkIfNameExists(string $name) : bool
     {
-        return $this->countBy(['name' => strtolower($name)]) > 0;
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder
+            ->select('COUNT(c.id)')
+            ->where($queryBuilder->expr()->eq(
+                $queryBuilder->expr()->lower('c.name'),
+                $queryBuilder->expr()->lower(':name')
+            ))
+            ->setParameter('name', $name, Type::STRING);
+        return $queryBuilder->getQuery()->getSingleScalarResult() > 0;
     }
 
     /**
@@ -77,24 +86,19 @@ class CommunityRepository extends EntityRepository
     {
         if ($player === null) {
             /** @var Community[] $communities */
-            $communities = $this->findBy(['private' === false]);
-            //$communities = R::find(static::ENTITY, 'private = 0 ORDER BY name ASC');
-
+            $communities = $this->findBy(['private' => false], ['name' => 'ASC']);
         } else {
-            /** @var Community[] $communities */
-            $qb = $this->getEntityManager()->createQuery(
+            $query = $this->getEntityManager()->createQuery(
                 'SELECT c FROM AppBundle:Community c
                   WHERE c.private = 0
                     AND c.id NOT IN (SELECT com.id
                                        FROM AppBundle:Participant p
                                        JOIN p.community com
-                                       JOIN p.player pl
-                                      WHERE pl.id = :player_id
-                                       
-                    )'
-            )->setParameter('player', $player->getId());
+                                      WHERE p.player = :player_id)'
+            )->setParameter('player_id', $player->getId());
 
-            $communities = $qb->getResult();
+            /** @var Community[] $communities */
+            $communities = $query->getResult();
         }
 
         return $communities;
@@ -107,9 +111,40 @@ class CommunityRepository extends EntityRepository
      *
      * @param Player|null $player
      * @return Community
+     * @throws NotFoundException
      */
     public function getRandomCommunity(Player $player = null): Community
     {
+        if ($player === null) {
+            /** @var Community $community */
+            $community = $this->findOneBy(['private' => false], ['created' => 'ASC']);
+        } else {
+            $query = $this->getEntityManager()->createQuery(
+                'SELECT c FROM AppBundle:Community c
+                  WHERE c.private = 0
+                    AND c.id NOT IN (SELECT com.id
+                                       FROM AppBundle:Participant p
+                                       JOIN p.community com
+                                      WHERE p.player = :player_id)
+                  ORDER BY c.created ASC
+                '
+            )->setMaxResults(1)
+                ->setParameter('player_id', $player->getId());
 
+            /** @var Community $community */
+            $community = $query->getOneOrNullResult();
+        }
+
+        if ($community === null) {
+            $exception = new NotFoundException();
+            $exception->addMessageWithCode(
+                ErrorCodes::CANNOT_RETRIEVE_RANDOM_COMMUNITY,
+                'No se ha podido recuperar una comunidad aleatoria'
+            );
+
+            throw $exception;
+        }
+
+        return $community;
     }
 }

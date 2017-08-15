@@ -23,7 +23,7 @@ class GeneralClassificationRepository extends EntityRepository
      */
     public function findByCommunity(Community $community): array
     {
-
+        $this->findBy(['community' => $community]);
     }
 
     /**
@@ -41,7 +41,26 @@ class GeneralClassificationRepository extends EntityRepository
         \DateTime $date = null
     ): array
     {
+        $queryBuilder = $this->createQueryBuilder('g');
+        $queryBuilder
+            ->where($queryBuilder->expr()->eq('g.community', ':community'))
+            ->andWhere($queryBuilder->expr()->eq('g.matchday', ':matchday'));
 
+        if ($date !== null) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->gt('g.updated', ':date'))
+                ->setParameter('date', $date);
+        }
+
+        $queryBuilder
+            ->orderBy('g.position', 'ASC')
+            ->setParameters([
+               'community' => $community,
+               'matchday' => $nextMatchday
+            ]);
+
+        $matches = $queryBuilder->getQuery()->getResult();
+        return $matches;
     }
 
     /**
@@ -56,7 +75,20 @@ class GeneralClassificationRepository extends EntityRepository
         Community $community
     ): array
     {
+        $classifications = $this->findBy(
+            ['community' => $community, 'matchday' => $matchday],
+            [
+                'totalPoints' => 'DESC',
+                'hitsTenPoints' => 'DESC',
+                'hitsFivePoints' => 'DESC',
+                'hitsThreePoints' => 'DESC',
+                'hitsTwoPoints' => 'DESC',
+                'hitsOnePoints' => 'DESC',
+                'hitsNegativePoints' => 'ASC'
+            ]
+        );
 
+        return $classifications;
     }
 
     /**
@@ -64,13 +96,28 @@ class GeneralClassificationRepository extends EntityRepository
      *
      * @param Community $community
      * @param \DateTime $date
-     * @return array
+     * @return Matchday[]
      */
-    public function findMatchdaysIdsWithGeneralClassificationUpdatedAfterDate(
+    public function findMatchdaysWithGeneralClassificationUpdatedAfterDate(
         Community $community,
         \DateTime $date = null
     ): array
     {
-        
+        $queryBuilder = $this->createQueryBuilder('g');
+        $queryBuilder
+            ->select('DISTINCT(m)')
+            ->innerJoin('g.matchday', 'm')
+            ->where($queryBuilder->expr()->eq('g.community', ':community'))
+            ->setParameter('community', $community);
+
+        if ($date !== null) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->eq('g.updated', ':date'))
+                ->setParameter('date', $date);
+        }
+
+        $ids = $queryBuilder->getQuery()->getScalarResult();
+
+        return $ids;
     }
 }

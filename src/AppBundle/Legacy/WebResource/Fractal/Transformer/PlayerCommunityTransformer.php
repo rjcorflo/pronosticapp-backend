@@ -6,10 +6,14 @@ use AppBundle\Entity\GeneralClassification;
 use AppBundle\Entity\Matchday;
 use AppBundle\Entity\MatchdayClassification;
 use AppBundle\Entity\Participant;
+use AppBundle\Entity\Player;
 use AppBundle\Legacy\WebResource\Fractal\Resource\PlayerCommunityResource;
+use AppBundle\Repository\GeneralClassificationRepository;
+use AppBundle\Repository\MatchdayClassificationRepository;
+use AppBundle\Repository\MatchdayRepository;
+use AppBundle\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManager;
 use League\Fractal\TransformerAbstract;
-use Psr\Container\Container;
 
 /**
  * Class PlayerCommunityTransformer
@@ -29,12 +33,12 @@ class PlayerCommunityTransformer extends TransformerAbstract
     private $matchdayRepository;
 
     /**
-     * @var MatchdayclassificationRepository
+     * @var MatchdayClassificationRepository
      */
     private $matchdayClassRepo;
 
     /**
-     * @var GeneralclassificationRepository
+     * @var GeneralClassificationRepository
      */
     private $generalClassRepo;
 
@@ -76,16 +80,19 @@ class PlayerCommunityTransformer extends TransformerAbstract
         /** @var Player $player */
         $player = $playerCommunityResource->getPlayer();
         $lastMatchday = $this->matchdayRepository->getLastMatchday();
-        $nextMatchday = $this->matchdayRepository->getNextMatchday();
-        $matchdayClassification = $this->matchdayClassRepo->findOneOrCreate($player, $community, $lastMatchday);
-        $general = $this->generalClassRepo->findOneOrCreate($player, $community, $nextMatchday);
+        /** @var MatchdayClassification $matchdayClassification */
+        $matchdayClassification = $this->matchdayClassRepo->findOneBy(['player' => $player, 'community' => $community, 'matchday' => $lastMatchday]);
 
-        if ($matchdayClassification->getId() != 0) {
+        if ($matchdayClassification !== null) {
             $resource['puntos_ultima_jornada'] = $matchdayClassification->getTotalPoints();
             $resource['puesto_ultima_jornada'] = $matchdayClassification->getPosition();
         }
 
-        if ($general->getId() != 0) {
+        $nextMatchday = $this->matchdayRepository->getNextMatchday();
+        /** @var GeneralClassification $general */
+        $generalClassification = $this->generalClassRepo->findOneBy(['player' => $player, 'community' => $community, 'matchday' => $nextMatchday]);
+
+        if ($generalClassification  !== null) {
             $resource['puesto_general'] = $general->getPosition();
         }
 

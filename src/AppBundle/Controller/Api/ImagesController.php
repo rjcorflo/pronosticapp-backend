@@ -56,7 +56,7 @@ class ImagesController extends Controller
         $response = new Response();
 
         try {
-            $images = $imageRepository->findAll();
+            $images = $imageRepository->findBy(['imageType' => 'comunidad']);
 
             $resource = $this->resourceGenerator->createImageResource($images);
 

@@ -6,7 +6,10 @@ use AppBundle\Entity\Community;
 use AppBundle\Entity\Participant;
 use AppBundle\Entity\Player;
 use AppBundle\Legacy\Model\Exception\NotFoundException;
+use AppBundle\Legacy\Util\General\ErrorCodes;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * ParticipantRepository.
@@ -17,14 +20,48 @@ use Doctrine\ORM\EntityRepository;
 class ParticipantRepository extends EntityRepository
 {
     /**
+     * Count by criteria.
+     *
+     * TODO remove
+     * @param array $criteria
+     * @return int
+     */
+    public function countBy(array $criteria)
+    {
+        return $this->getEntityManager()->getUnitOfWork()->getEntityPersister($this->getEntityName())->count($criteria);
+    }
+
+    /**
      * List community's players.
+     *
      * @param Community $community
      * @param \DateTime|null $date
      * @return Player[]
      */
     public function findPlayersFromCommunity(Community $community, \DateTime $date = null): array
     {
-        
+        $queryBuilder = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('p')
+            ->from('AppBundle:Player', 'p');
+
+        if ($date === null) {
+            $queryBuilder
+                ->innerJoin('p.participations', 'pa');
+        } else {
+            $queryBuilder
+                ->innerJoin('p.participations', 'pa', Expr\Join::WITH, 'pa.updated > :date')
+                ->setParameter('date', $date);
+        }
+
+        $queryBuilder
+            ->where($queryBuilder->expr()->eq('pa.community', ':community_id'))
+            ->orderBy('p.nickname', 'ASC')
+            ->setParameter('community_id', $community->getId());
+
+        $players = $queryBuilder->getQuery()->getResult();
+
+        return $players;
     }
 
     /**
@@ -39,11 +76,33 @@ class ParticipantRepository extends EntityRepository
      */
     public function findCommunitiesFromPlayer(Player $player, \DateTime $date = null): array
     {
-        
+        $queryBuilder = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Community', 'c');
+
+        if ($date === null) {
+            $queryBuilder
+                ->innerJoin('c.participants', 'pa');
+        } else {
+            $queryBuilder
+                ->innerJoin('c.participants', 'pa', Expr\Join::WITH, 'pa.updated > :date')
+                ->setParameter('date', $date, Type::DATETIME);
+        }
+
+        $queryBuilder
+            ->where($queryBuilder->expr()->eq('pa.player', ':player'))
+            ->orderBy('c.name', 'ASC')
+            ->setParameter('player', $player);
+
+        $communities = $queryBuilder->getQuery()->getResult();
+
+        return $communities;
     }
 
     /**
      * Find participation from player in community.
+     *
      * @param Player $player
      * @param Community $community
      * @return mixed
@@ -54,11 +113,29 @@ class ParticipantRepository extends EntityRepository
         Community $community
     ): Participant
     {
-        
+        /** @var Participant $participant */
+        $participant = $this->findOneBy(['community' => $community->getId(), 'player' => $player->getId()]);
+
+        if ($participant === null) {
+            $exception = new NotFoundException();
+            $exception->addMessageWithCode(
+                ErrorCodes::PLAYER_IS_NOT_MEMBER,
+                sprintf(
+                    'El jugador %s no es miembro de la comunidad %s',
+                    $player->getNickname(),
+                    $community->getName()
+                )
+            );
+
+            throw $exception;
+        }
+
+        return $participant;
     }
 
     /**
      * Check if player is already a participant of the community.
+     *
      * @param Player $player
      * @param Community $community
      * @return bool
@@ -68,26 +145,28 @@ class ParticipantRepository extends EntityRepository
         Community $community
     ): bool
     {
-        
+        return $this->countBy(['community' => $community->getId(), 'player' => $player->getId()]) > 0;
     }
 
     /**
      * Return number of players from community.
+     *
      * @param Community $community
      * @return int
      */
     public function countPlayersFromCommunity(Community $community): int
     {
-        
+        return $this->countBy(['community' => $community->getId()]);
     }
 
     /**
      * Return number of communities in which player participate.
+     *
      * @param Player $player
      * @return int
      */
     public function countCommunitiesFromPlayer(Player $player): int
     {
-        
+        return $this->countBy(['player' => $player->getId()]);
     }
 }

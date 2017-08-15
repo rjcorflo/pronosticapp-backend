@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class Forecast.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ForecastRepository")
  * @ORM\Table(name="forecasts")
  * @ORM\HasLifecycleCallbacks
  */

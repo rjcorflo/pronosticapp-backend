@@ -54,9 +54,9 @@ class PlayerRepository extends EntityRepository
     /**
      * Find player by nickname or email.
      *
-     * @param string $name
-     * @return Player The player.
-     * @throws NotFoundException Player not found.
+     * @param string                $name
+     * @return Player               The player.
+     * @throws NotFoundException    Player not found.
      */
     public function findPlayerByNicknameOrEmail(string $name) : Player
     {

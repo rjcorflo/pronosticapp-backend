@@ -2,6 +2,10 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Community;
+use AppBundle\Entity\Match;
+use AppBundle\Entity\Matchday;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,4 +16,143 @@ use Doctrine\ORM\EntityRepository;
  */
 class MatchdayRepository extends EntityRepository
 {
+    /**
+     * Get next or actual matchday.
+     *
+     * @return null | Matchday
+     */
+    public function getNextMatchday(): ?Matchday
+    {
+        $actualDate = new \DateTime();
+
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->select('m')
+            ->from('AppBundle:Match', 'm')
+            ->where($queryBuilder->expr()->gt('m.startTime', ':date'))
+            ->orderBy('m.startTime', 'ASC')
+            ->setMaxResults(1)
+            ->setParameter('date', $actualDate, Type::DATETIME);
+
+        $match = $queryBuilder->getQuery()->getOneOrNullResult();
+
+        if ($match === null) {
+            /** @var Matchday | null $matchday */
+            $matchday = $this->findOneBy([], ['id' => 'DESC']);
+            return $matchday;
+        }
+
+        return $match->getMatchday();
+    }
+
+    /**
+     * Get last completed matchday.
+     *
+     * @return Matchday
+     */
+    public function getLastMatchday(): Matchday
+    {
+        $actualDate = \DateTime::createFromFormat('Y-m-d', '2017-08-30');//new \DateTime();
+
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->select('m as match', 'MAX(m.startTime) AS time')
+            ->from('AppBundle:Match', 'm')
+            ->innerJoin('m.matchday', 'ma')
+            ->where($queryBuilder->expr()->lt('m.startTime', ':date'))
+            ->groupBy('ma.id')
+            ->orderBy('time', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('date', $actualDate, Type::DATETIME);
+
+        $result = $queryBuilder->getQuery()->getOneOrNullResult();
+
+        if ($result === null) {
+            /** @var Matchday | null $matchday */
+            $matchday = $this->findOneBy([], ['id', 'DESC']);
+            return $matchday;
+        } else {
+            return $result['match']->getMatchday();
+        }
+    }
+
+
+    /**
+     * Find all matchdays until next matchday (included).
+     *
+     * If next (or actual) matchday is Jornada 3, returns Jornada 3 and all before it.
+     *
+     * @return Matchday[]
+     */
+    public function findAllUntilNextMatchday(): array
+    {
+        $nextMatchday = $this->getNextMatchday();
+
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder
+            ->where($queryBuilder->expr()->lte('m.id', ':id'))
+            ->setParameter('id', $nextMatchday->getId());
+
+        $matchdays = $queryBuilder->getQuery()->getResult();
+
+        return $matchdays;
+    }
+
+
+    /**
+     * Return all matchdays ordered by matchday_order field.
+     *
+     * @return Matchday[]
+     */
+    public function findAllOrdered(): array
+    {
+        $matchdays = $this->findBy([], ['matchdayOrder' => 'ASC']);
+
+        return $matchdays;
+    }
+
+    /**
+     * Find matchdays for community updated after date (or all if no date is passed).
+     *
+     * @param Community $community
+     * @param \DateTime|null $date
+     * @return Matchday[]
+     */
+    public function findByCommunity(Community $community, \DateTime $date = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+
+        if ($date !== null) {
+            $queryBuilder->where($queryBuilder->expr()->gt('m.updated', ':date'))
+                ->setParameter('date', $date, Type::DATETIME);
+        }
+
+        $queryBuilder->orderBy('m.matchdayOrder', 'ASC');
+
+        $matchdays = $queryBuilder->getQuery()->getResult();
+
+        return $matchdays;
+    }
+
+    /**
+     * Retrieve all matchdays between two of them.
+     *
+     * Example: Return Jornada 2, Jornada 3 y Jornada 4 when passed Jornada 2 and Jornada 4 as parameters
+     *
+     * @param Matchday  $initial
+     * @param Matchday  $finish
+     * @return mixed
+     */
+    public function findAllBetweenMatchdays(Matchday $initial, Matchday $finish)
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder
+            ->where($queryBuilder->expr()->gt('m.matchdayOrder', '?1'))
+            ->andWhere($queryBuilder->expr()->lte('m.matchdayOrder', '?2'))
+            ->setParameters([1 => $initial->getMatchdayOrder(), 2 => $finish->getMatchdayOrder()]);
+
+        $matchdays = $queryBuilder->getQuery()->getResult();
+
+        return $matchdays;
+    }
 }

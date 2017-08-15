@@ -21,7 +21,7 @@ class TeamTransformer extends TransformerAbstract
             'nombre' => $team->getName(),
             'nombre_abrev' => $team->getAlias(),
             'color_equipo' => $team->getColor(),
-            'estadio' => $team->getStadium(),
+            'estadio' => $team->getStadium()->getName(),
             'ciudad' => $team->getCity(),
             'url' => $team->getImage()->getUrl()
         ];

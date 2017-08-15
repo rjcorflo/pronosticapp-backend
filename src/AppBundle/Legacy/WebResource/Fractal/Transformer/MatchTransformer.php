@@ -34,10 +34,11 @@ class MatchTransformer extends TransformerAbstract
             'fecha' => strftime('%A, %d de %B de %Y', $match->getStartTime()->getTimestamp()),
             'hora' => $match->getStartTime()->format('H:i'),
             'tag' => $match->getTag(),
-            'lugar' => $match->getStadium(),
             'url' => $match->getImage()->getUrl(),
             'estado' => $match->getState()
         ];
+
+        $resource['lugar'] = $match->getStadium() === null ? $match->getLocalTeam()->getStadium()->getName() : $match->getStadium()->getName();
 
         $resource['goles_local'] = $match->getState() === Match::STATE_NOT_PLAYED ?
             -1 : $match->getLocalGoals();
