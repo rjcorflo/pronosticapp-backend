@@ -50,7 +50,7 @@ class MatchController extends FOSRestController implements TokenAuthenticatedCon
     /**
      * Get active matches from matchday.
      *
-     * @Rest\Post("/community/{idCommunity}/matches/active", requirements={"idCommunity": "[0-9]+"})
+     * @Rest\Post("/community/{idCommunity}/matches/actives", requirements={"idCommunity": "[0-9]+"})
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
