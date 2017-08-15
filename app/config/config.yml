@@ -125,17 +125,17 @@ easy_admin:
             class: AppBundle\Entity\GeneralClassification
         Image:
             class: AppBundle\Entity\Image
+            list:
+                actions:
+                    - { name: 'show', label: '', icon: 'search' }
+                    - { name: 'edit', label: '', icon: 'edit' }
+                    - { name: 'delete', label: '', icon: 'trash' }
+                fields:
+                    - id
+                    - imageType
+                    - description
+                    - { property: 'image', type: 'image', base_path: '%app.path.images%' }
             form:
-                list:
-                    actions:
-                        - { name: 'show', label: '', icon: 'search' }
-                        - { name: 'edit', label: '', icon: 'edit' }
-                        - { name: 'delete', label: '', icon: 'trash' }
-                    fields:
-                        - id
-                        - imageType
-                        - description
-                        - { property: 'image', type: 'image', base_path: '%app.path.images%' }
                 fields:
                     - imageType
                     - description

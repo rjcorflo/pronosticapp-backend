@@ -7,7 +7,7 @@ require 'recipe/symfony3.php';
 set('repository', 'https://github.com/rjcorflo/pronosticapp-backend');
 set('git_tty', false); // [Optional] Allocate tty for git on first deployment
 add('shared_files', []);
-add('shared_dirs', ['var/data']);
+add('shared_dirs', ['var/data', 'web/uploads']);
 set('writable_dirs', []);
 
 // Hosts
