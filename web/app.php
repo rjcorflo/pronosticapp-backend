@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Europe/Madrid');
+$local = setlocale(LC_TIME, 'es_ES.utf8');
 
 use Symfony\Component\HttpFoundation\Request;
 

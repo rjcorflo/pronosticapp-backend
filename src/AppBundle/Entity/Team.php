@@ -221,4 +221,9 @@ class Team
     {
         return $this->getImage()->getImage();
     }
+
+    public function __toString()
+    {
+        return $this->getName();
+    }
 }
