@@ -55,7 +55,7 @@ class MatchController extends FOSRestController implements TokenAuthenticatedCon
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function activeMatches(
+    public function getActiveMatchesAction(
         ServerRequestInterface $request,
         $idCommunity
     ): ResponseInterface {
