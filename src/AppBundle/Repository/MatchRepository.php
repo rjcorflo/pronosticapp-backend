@@ -53,9 +53,9 @@ class MatchRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder
             ->select('COUNT(m.id)')
-            ->where($queryBuilder->expr()->eq('m.matchday', ':matchday_id'))
+            ->where($queryBuilder->expr()->eq('m.matchday', ':matchday'))
             ->andWhere($queryBuilder->expr()->gt('m.startTime', ':date'))
-            ->setParameter('matchday_id', $matchday->getId())
+            ->setParameter('matchday', $matchday)
             ->setParameter('date', $date, Type::DATETIME);
 
         $count = $queryBuilder->getQuery()->getSingleScalarResult();

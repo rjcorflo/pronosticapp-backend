@@ -18,7 +18,6 @@ use AppBundle\Repository\MatchdayRepository;
 use AppBundle\Repository\MatchRepository;
 use AppBundle\Repository\PlayerRepository;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class ClassificationCalculationProcess.
@@ -114,9 +113,12 @@ class ClassificationCalculationProcess
                 $classificationUpdated = $this->calculateMatchdayClassificationForCommunity($matchday, $community);
 
                 if ($classificationUpdated) {
+                    $this->entityManager->flush();
                     $this->calculateGeneralClassificationForCommunity($matchday, $community);
                 }
             }
+
+            $this->entityManager->flush();
         }
     }
 
@@ -134,6 +136,7 @@ class ClassificationCalculationProcess
         $players = $community->getParticipants()->map( function (Participant $participant) { return $participant->getPlayer(); } )->toArray();
 
         foreach ($players as $player) {
+            /** @var MatchdayClassification $classification */
             $classification = $this->matchdayClassRepo->findOneBy([
                     'player' => $player,
                     'community' => $community,
@@ -143,15 +146,18 @@ class ClassificationCalculationProcess
 
             // If there is already a record and there are no matches updated after record modified date
             // then don't update classification record
-            if ($classification->getId() > 0) {
+            if ($classification !== null) {
                 $existMatchesModified = $this->matchRepository
-                        ->countModifiedMatchesAfterDate($matchday, $classification->getLastModifiedDate()) > 0;
+                        ->countModifiedMatchesAfterDate($matchday, $classification->getUpdated()) > 0;
 
                 if (!$existMatchesModified) {
                     continue;
                 }
+            } else {
+                $classification = new MatchdayClassification();
             }
 
+            /** @var Forecast[] $forecasts */
             $forecasts = $this->forecastRepository->findAllFromCommunity($community, $player, $matchday);
 
             $points = 0;
@@ -162,10 +168,8 @@ class ClassificationCalculationProcess
             $hitsOne = 0;
             $hitsNegative = 0;
 
-            $beans = [];
             foreach ($forecasts as $forecast) {
                 $forecast->calculateActualPoints();
-                $forecast->setLastModifiedDate($this->actualDate);
 
                 $points += $forecast->getPoints();
                 $hitsTen += $forecast->getPoints() == 10 ? 1 : 0;
@@ -175,10 +179,8 @@ class ClassificationCalculationProcess
                 $hitsOne += $forecast->getPoints() == 1 ? 1 : 0;
                 $hitsNegative += $forecast->getPoints() == -1 ? 1 : 0;
 
-                $beans[] = $forecast;
+                $this->entityManager->persist($forecast);
             }
-
-            $this->forecastRepository->storeMultiple($beans);
 
             $classification->setCommunity($community);
             $classification->setPlayer($player);
@@ -186,15 +188,15 @@ class ClassificationCalculationProcess
             $classification->setBasicPoints($points);
             $classification->setTotalPoints(0);
             $classification->setPointsForPosition(0);
+            $classification->setPosition(0);
             $classification->setHitsTenPoints($hitsTen);
             $classification->setHitsFivePoints($hitsFive);
             $classification->setHitsThreePoints($hitsThree);
             $classification->setHitsTwoPoints($hitsTwo);
             $classification->setHitsOnePoints($hitsOne);
             $classification->setHitsNegativePoints($hitsNegative);
-            $classification->setLastModifiedDate($this->actualDate);
 
-            $this->matchdayClassRepo->store($classification);
+            $this->entityManager->persist($classification);
 
             // Classification has been updated
             $classificationUpdated = true;
@@ -208,12 +210,12 @@ class ClassificationCalculationProcess
     }
 
     /**
-     * @param MatchdayInterface $matchday
-     * @param CommunityInterface $community
+     * @param Matchday $matchday
+     * @param Community $community
      */
     private function updateClassification(
-        MatchdayInterface $matchday,
-        CommunityInterface $community
+        Matchday $matchday,
+        Community $community
     ) {
         $classifications = $this->matchdayClassRepo->findOrderedByMatchdayAndCommunity($matchday, $community);
 
@@ -275,19 +277,19 @@ class ClassificationCalculationProcess
             $classification->setTotalPoints($totalPoints);
 
             $classification->setPosition($this->position++);
-        }
 
-        $this->matchdayClassRepo->storeMultiple($classifications);
+            $this->entityManager->persist($classification);
+        }
     }
 
     /**
      * @param int $index
-     * @param MatchdayclassificationInterface $classification
+     * @param MatchdayClassification $classification
      * @param int $factor
      */
     private function updateClassificationPosition(
         int $index,
-        MatchdayclassificationInterface $classification,
+        MatchdayClassification $classification,
         int $factor
     ) {
         $classification->setPointsForPosition($this->positionPoints);
@@ -305,12 +307,12 @@ class ClassificationCalculationProcess
     }
 
     /**
-     * @param MatchdayInterface $matchday
-     * @param CommunityInterface $community
+     * @param Matchday $matchday
+     * @param Community $community
      */
     private function calculateGeneralClassificationForCommunity(
-        MatchdayInterface $matchday,
-        CommunityInterface $community
+        Matchday $matchday,
+        Community $community
     ) {
         // Must update classification for passed matchday until next matchday ...
         $nextMatchday = $this->matchdayRepository->getNextMatchday();
@@ -318,45 +320,22 @@ class ClassificationCalculationProcess
         $matchdaysToUpdate = $this->matchdayRepository->findAllBetweenMatchdays($matchday, $nextMatchday);
 
         foreach ($matchdaysToUpdate as $matchdayToUpdate) {
-            $results = R::getAll(
-                'SELECT player_id,
-                        SUM(total_points) as points,
-                        SUM(hits_ten_points) as hits10,
-                        SUM(hits_five_points) as hits5,
-                        SUM(hits_three_points) as hits3,
-                        SUM(hits_two_points) as hits2,
-                        SUM(hits_one_points) as hits1,
-                        SUM(hits_negative_points) as hitsNeg,
-                        (SELECT COUNT(1) 
-                           FROM matchdayclassification m1
-                          WHERE m1.player_id = m.player_id
-                            AND m1.community_id = :community_id
-                            AND m1.matchday_id <= :matchday_id
-                            AND m1.position_points = 3) as times_first,
-                        (SELECT COUNT(1) 
-                           FROM matchdayclassification m1
-                          WHERE m1.player_id = m.player_id
-                            AND m1.community_id = :community_id
-                            AND m1.matchday_id <= :matchday_id
-                            AND m1.position_points = 2) as times_second,
-                        (SELECT COUNT(1) 
-                           FROM matchdayclassification m1
-                          WHERE m1.player_id = m.player_id
-                            AND m1.community_id = :community_id
-                            AND m1.matchday_id <= :matchday_id
-                            AND m1.position_points = 1) as times_third
-                   FROM matchdayclassification m
-                  WHERE m.community_id = :community_id
-                    AND m.matchday_id <= :matchday_id
-                  GROUP BY player_id
-                ',
-                [':community_id' => $community->getId(), ':matchday_id' => $matchday->getId()]
-            );
+            $results = $this->matchdayClassRepo->retrieveGeneralDataForAllUSers($community, $matchdayToUpdate);
 
             foreach ($results as $result) {
-                $player = $this->playerRepository->getById($result['player_id']);
+                $player = $result['matchday']->getPlayer();
 
-                $classification = $this->generalClassRepo->findOneOrCreate($player, $community, $matchday);
+                $classification = $this->generalClassRepo->findOneBy([
+                        'player' => $player,
+                        'community' => $community,
+                        'matchday' => $matchday
+                    ]
+                );
+
+                if ($classification === null) {
+                    $classification = new GeneralClassification();
+                }
+
                 $classification->setPlayer($player);
                 $classification->setMatchday($matchday);
                 $classification->setCommunity($community);
@@ -370,22 +349,23 @@ class ClassificationCalculationProcess
                 $classification->setTimesFirst($result['times_first']);
                 $classification->setTimesSecond($result['times_second']);
                 $classification->setTimesThird($result['times_third']);
-                $classification->setLastModifiedDate($this->actualDate);
+                $classification->setPosition(0);
 
-                $this->generalClassRepo->store($classification);
+                $this->entityManager->persist($classification);
             }
 
+            $this->entityManager->flush();
             $this->updateGeneralClassification($matchdayToUpdate, $community);
         }
     }
 
     /**
-     * @param MatchdayInterface $matchday
-     * @param CommunityInterface $community
+     * @param Matchday $matchday
+     * @param Community $community
      */
     private function updateGeneralClassification(
-        MatchdayInterface $matchday,
-        CommunityInterface $community
+        Matchday $matchday,
+        Community $community
     ) {
         $classifications = $this->generalClassRepo->findOrderedByMatchdayAndCommunity($matchday, $community);
 
@@ -394,8 +374,7 @@ class ClassificationCalculationProcess
 
         foreach ($classifications as $index => $classification) {
             $classification->setPosition($this->position++);
+            $this->entityManager->persist($classification);
         }
-
-        $this->matchdayClassRepo->storeMultiple($classifications);
     }
 }

@@ -147,7 +147,7 @@ class MatchdayRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder
-            ->where($queryBuilder->expr()->gt('m.matchdayOrder', '?1'))
+            ->where($queryBuilder->expr()->gte('m.matchdayOrder', '?1'))
             ->andWhere($queryBuilder->expr()->lte('m.matchdayOrder', '?2'))
             ->setParameters([1 => $initial->getMatchdayOrder(), 2 => $finish->getMatchdayOrder()]);
 

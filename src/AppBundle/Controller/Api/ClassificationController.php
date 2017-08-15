@@ -4,19 +4,39 @@ namespace AppBundle\Controller\Api;
 
 use AppBundle\Legacy\Process\ClassificationCalculationProcess;
 use AppBundle\Legacy\Util\General\MessageResult;
+use AppBundle\Legacy\Util\General\ResponseGenerator;
+use AppBundle\Legacy\WebResource\WebResourceGeneratorInterface;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 
 /**
  * Class ClassificationController
- *
- * @package RJ\PronosticApp\App\Controller
  */
 class ClassificationController extends FOSRestController
 {
+    use ResponseGenerator;
+
+    /**
+     * @var WebResourceGeneratorInterface
+     */
+    protected $resourceGenerator;
+
+    /**
+     * @param WebResourceGeneratorInterface $resourceGenerator
+     */
+    public function __construct(
+        WebResourceGeneratorInterface $resourceGenerator
+    ) {
+        $this->resourceGenerator = $resourceGenerator;
+    }
+
     /**
      * Calculate classifications.
+     *
+     * @Rest\Get("/classification/calculate")
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
@@ -27,6 +47,9 @@ class ClassificationController extends FOSRestController
         $params = $request->getQueryParams();
 
         $result = new MessageResult();
+
+        $response = new Response();
+
         try {
             $result->setDescription('Clasificaciones calculadas');
 
