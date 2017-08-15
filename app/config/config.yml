@@ -162,21 +162,18 @@ easy_admin:
                 fields:
                     - id
                     - name
-                    - alias
-                    - color
+                    - city
                     - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
             show:
                 fields:
                     - id
                     - name
-                    - alias
-                    - color
+                    - city
                     - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
             form:
                 fields:
                     - name
-                    - alias
-                    - color
+                    - city
                     - image
         Team:
             class: AppBundle\Entity\Team
