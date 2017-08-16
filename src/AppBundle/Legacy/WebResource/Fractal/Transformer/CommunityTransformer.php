@@ -5,7 +5,7 @@ namespace AppBundle\Legacy\WebResource\Fractal\Transformer;
 use AppBundle\Entity\Community;
 use AppBundle\Entity\Participant;
 use AppBundle\Repository\ParticipantRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -28,8 +28,10 @@ class CommunityTransformer extends TransformerAbstract
     private $participantRepo;
     /**
      * CommunityTransformer constructor.
+     *
+     * @param ObjectManager $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ObjectManager $em)
     {
         $this->participantRepo = $em->getRepository(Participant::class);
     }

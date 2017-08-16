@@ -4,8 +4,7 @@ namespace AppBundle\Legacy\WebResource\Fractal\Transformer;
 
 use AppBundle\Entity\Matchday;
 use AppBundle\Legacy\WebResource\Fractal\Resource\GeneralClassificationResource;
-use AppBundle\Repository\MatchdayRepository;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -19,8 +18,12 @@ class GeneralClassificationListTransformer extends TransformerAbstract
 
     private $repository;
 
-
-    public function __construct(EntityManager $em)
+    /**
+     * GeneralClassificationListTransformer constructor.
+     *
+     * @param ObjectManager $em
+     */
+    public function __construct(ObjectManager $em)
     {
         $this->repository = $em->getRepository(Matchday::class);
     }

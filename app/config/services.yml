@@ -32,6 +32,9 @@ services:
     AppBundle\Legacy\WebResource\Fractal\Transformer\:
         resource: '../../src/AppBundle/Legacy/WebResource/Fractal/Transformer'
         public: true
+
+    AppBundle\Legacy\WebResource\WebResourceGeneratorInterface: '@AppBundle\Legacy\WebResource\Fractal\FractalGenerator'
+    AppBundle\Legacy\Util\Validation\ValidatorInterface: '@AppBundle\Legacy\Util\Validation\GeneralValidator'
     # add more services, or override services that need manual wiring
     # AppBundle\Service\ExampleService:
     #     arguments:

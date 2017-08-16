@@ -12,7 +12,7 @@ use AppBundle\Repository\GeneralClassificationRepository;
 use AppBundle\Repository\MatchdayClassificationRepository;
 use AppBundle\Repository\MatchdayRepository;
 use AppBundle\Repository\ParticipantRepository;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -45,9 +45,9 @@ class PlayerCommunityTransformer extends TransformerAbstract
     /**
      * PlayerCommunityTransformer constructor.
      *
-     * @param EntityManager $em
+     * @param ObjectManager $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(ObjectManager $em)
     {
         $this->participantRepo = $em->getRepository(Participant::class);
         $this->matchdayRepository = $em->getRepository(Matchday::class);

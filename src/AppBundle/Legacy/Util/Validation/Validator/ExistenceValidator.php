@@ -9,7 +9,7 @@ use AppBundle\Legacy\Util\General\ErrorCodes;
 use AppBundle\Repository\CommunityRepository;
 use AppBundle\Repository\ParticipantRepository;
 use AppBundle\Repository\PlayerRepository;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Validate data existence.
@@ -17,19 +17,19 @@ use Doctrine\ORM\EntityManager;
 class ExistenceValidator extends AbstractValidator
 {
     /**
-     * @var EntityManager
+     * @var ObjectManager
      */
-    private $entityManager;
+    private $manager;
 
     /**
      * ExistenceValidator constructor.
-     * @param EntityManager $enityManager
+     * @param ObjectManager $manager
      */
     public function __construct(
-        EntityManager $enityManager
+        ObjectManager $manager
     ) {
         parent::__construct();
-        $this->entityManager = $enityManager;
+        $this->manager = $manager;
     }
 
     /**
@@ -41,7 +41,7 @@ class ExistenceValidator extends AbstractValidator
     public function checkIfNicknameExists(Player $player)
     {
         /** @var PlayerRepository $playerRepository */
-        $playerRepository = $this->entityManager->getRepository(Player::class);
+        $playerRepository = $this->manager->getRepository(Player::class);
 
         try {
             $existsNickname = $playerRepository->checkNickameExists($player->getNickname());
@@ -73,7 +73,7 @@ class ExistenceValidator extends AbstractValidator
     public function checkIfEmailExists(Player $player)
     {
         /** @var PlayerRepository $playerRepository */
-        $playerRepository = $this->entityManager->getRepository(Player::class);
+        $playerRepository = $this->manager->getRepository(Player::class);
 
         try {
             $existsEmail = $playerRepository->checkEmailExists($player->getEmail());
@@ -105,7 +105,7 @@ class ExistenceValidator extends AbstractValidator
     public function checkIfNameExists(Community $community)
     {
         /** @var CommunityRepository $communityRepository */
-        $communityRepository = $this->entityManager->getRepository(Community::class);
+        $communityRepository = $this->manager->getRepository(Community::class);
 
         try {
             $existsName = $communityRepository->checkIfNameExists($community->getName());
@@ -138,7 +138,7 @@ class ExistenceValidator extends AbstractValidator
     public function checkIfPlayerIsAlreadyFromCommunity(Player $player, Community $community)
     {
         /** @var ParticipantRepository $participantRepo */
-        $participantRepo = $this->entityManager->getRepository(Participant::class);
+        $participantRepo = $this->manager->getRepository(Participant::class);
 
         try {
             $exists = $participantRepo->checkIfPlayerIsAlreadyFromCommunity($player, $community);

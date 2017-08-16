@@ -5,7 +5,7 @@ namespace AppBundle\Legacy\WebResource\Fractal\Transformer;
 use AppBundle\Entity\Matchday;
 use AppBundle\Legacy\WebResource\Fractal\Resource\CommunityDataResource;
 use AppBundle\Repository\MatchdayRepository;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -32,9 +32,9 @@ class CommunityDataTransformer extends TransformerAbstract
     /**
      * CommunityTransformer constructor.
      *
-     * @param EntityManager $em
+     * @param ObjectManager $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(ObjectManager $em)
     {
         $this->matchdayRepository = $em->getRepository(Matchday::class);
     }
