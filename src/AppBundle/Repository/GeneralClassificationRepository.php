@@ -105,19 +105,26 @@ class GeneralClassificationRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('g');
         $queryBuilder
-            ->select('DISTINCT(m)')
+            ->select('DISTINCT(m) AS id')
             ->innerJoin('g.matchday', 'm')
             ->where($queryBuilder->expr()->eq('g.community', ':community'))
             ->setParameter('community', $community);
 
         if ($date !== null) {
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->eq('g.updated', ':date'))
+                ->andWhere($queryBuilder->expr()->gt('g.updated', ':date'))
                 ->setParameter('date', $date);
         }
 
-        $ids = $queryBuilder->getQuery()->getScalarResult();
+        $results = $queryBuilder->getQuery()->getResult();
 
-        return $ids;
+        $repo = $this->getEntityManager()->getRepository(Matchday::class);
+
+        $matchdays = [];
+        foreach ($results as $id) {
+            $matchdays[] = $repo->find($id);
+        }
+
+        return $matchdays;
     }
 }

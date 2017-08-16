@@ -35,7 +35,7 @@ class MatchTransformer extends TransformerAbstract
             'hora' => $match->getStartTime()->format('H:i'),
             'tag' => $match->getTag(),
             'url' => $match->getImage()->getUrl(),
-            'estado' => $match->getState()
+            'estado' => strval($match->getState())
         ];
 
         $resource['lugar'] = $match->getStadium() === null ? $match->getLocalTeam()->getStadium()->getName() : $match->getStadium()->getName();
