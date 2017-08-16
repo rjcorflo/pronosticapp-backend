@@ -66,6 +66,17 @@ easy_admin:
         Player:
             class: AppBundle\Entity\Player
             controller: AppBundle\Controller\Admin\PlayerController
+            new:
+                fields: [ nickname, email, password, firstName, lastName, avatar, color ]
+            edit:
+                fields:
+                    - nickname
+                    - email
+                    - { property: 'plainPassword', label: 'New password', type: 'password'}
+                    - firstName
+                    - lastName
+                    - avatar
+                    - color
         Stadium:
             class: AppBundle\Entity\Stadium
             list:

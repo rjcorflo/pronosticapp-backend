@@ -22,7 +22,8 @@ class PlayerController extends BaseAdminController
     protected function prePersistEntity($entity)
     {
         if ($entity instanceof Player) {
-            $this->encodePlayerPassword($entity);
+            $hashedPassword = $this->encoder->encodePassword($entity, $entity->getPassword());
+            $entity->setPassword($hashedPassword);
         }
     }
 
@@ -31,14 +32,9 @@ class PlayerController extends BaseAdminController
      */
     protected function preUpdateEntity($entity)
     {
-        if ($entity instanceof Player) {
-            $this->encodePlayerPassword($entity);
+        if ($entity instanceof Player && $entity->getPlainPassword() !== null) {
+            $hashedPassword = $this->encoder->encodePassword($entity, $entity->getPlainPassword());
+            $entity->setPassword($hashedPassword);
         }
-    }
-
-    private function encodePlayerPassword(Player $player)
-    {
-        $hashedPassword = $this->encoder->encodePassword($player, $player->getPassword());
-        $player->setPassword($hashedPassword);
     }
 }

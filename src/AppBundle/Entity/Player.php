@@ -42,6 +42,13 @@ class Player implements UserInterface
     private $email;
 
     /**
+     * Property for changing password from backend.
+     * 
+     * @var string
+     */
+    private $plainPassword;
+    
+    /**
      * @var string
      *
      * @ORM\Column(type="string")
@@ -301,7 +308,7 @@ class Player implements UserInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getRoles()
     {
@@ -309,7 +316,7 @@ class Player implements UserInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getSalt()
     {
@@ -317,7 +324,7 @@ class Player implements UserInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getUsername()
     {
@@ -325,10 +332,21 @@ class Player implements UserInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function eraseCredentials()
     {
+        $this->plainPassword = null;
+    }
+    
+    public function setPlainPassword(?string $plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+    }
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
     }
 
 
