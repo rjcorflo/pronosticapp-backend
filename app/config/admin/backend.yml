@@ -1,0 +1,97 @@
+easy_admin:
+    design:
+        form_theme: horizontal
+        menu:
+            - { label: Players }
+            - { entity: Player, icon: user }
+            - Token
+            - Community
+            - Participant
+            - { label: Matchday }
+            - Competition
+            - Phase
+            - Matchday
+            - Match
+            - { label: Classifications }
+            - Forecast
+            - MatchdayClassification
+            - GeneralClassification
+            - { label: Teams data }
+            - Team
+            - Stadium
+            - { label: Users }
+            - User
+            - { label: Other }
+            - Image
+    entities:
+        Community:
+            class: AppBundle\Entity\Community
+        Competition:
+            class: AppBundle\Entity\Competition
+        Forecast:
+            class: AppBundle\Entity\Forecast
+        GeneralClassification:
+            class: AppBundle\Entity\GeneralClassification
+        Image:
+            class: AppBundle\Entity\Image
+            list:
+                actions:
+                    - { name: 'show', label: '', icon: 'search' }
+                    - { name: 'edit', label: '', icon: 'edit' }
+                    - { name: 'delete', label: '', icon: 'trash' }
+                fields:
+                    - id
+                    - imageType
+                    - description
+                    - { property: 'image', type: 'image', base_path: '%app.path.images%' }
+            form:
+                fields:
+                    - imageType
+                    - description
+                    - { property: 'imageFile', type: 'vich_image' }
+        Match:
+            class: AppBundle\Entity\Match
+        Matchday:
+            class: AppBundle\Entity\Matchday
+        MatchdayClassification:
+            class: AppBundle\Entity\MatchdayClassification
+        Participant:
+            class: AppBundle\Entity\Participant
+            form:
+                fields:
+                    - player
+                    - community
+        Phase:
+            class: AppBundle\Entity\Phase
+        Player:
+            class: AppBundle\Entity\Player
+            controller: AppBundle\Controller\Admin\PlayerController
+        Stadium:
+            class: AppBundle\Entity\Stadium
+            list:
+                actions:
+                    - { name: 'show', label: '', icon: 'search' }
+                    - { name: 'edit', label: '', icon: 'edit' }
+                    - { name: 'delete', label: '', icon: 'trash' }
+                fields:
+                    - id
+                    - name
+                    - city
+                    - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
+            show:
+                fields:
+                    - id
+                    - name
+                    - city
+                    - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
+            form:
+                fields:
+                    - name
+                    - city
+                    - image
+        Team:
+            class: AppBundle\Entity\Team
+        Token:
+            class: AppBundle\Entity\Token
+        User:
+            class: AppBundle\Entity\User

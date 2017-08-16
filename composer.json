@@ -24,6 +24,7 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "incenteev/composer-parameter-handler": "^2.0",
         "javiereguiluz/easyadmin-bundle": "^1.12",
+        "nelmio/cors-bundle": "^1.5",
         "respect/validation": "^1.1",
         "samj/fractal-bundle": "^1.0",
         "sensio/distribution-bundle": "^5.0.19",

@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new JavierEguiluz\Bundle\EasyAdminBundle\EasyAdminBundle(),
             new SamJ\FractalBundle\SamJFractalBundle(),
             new FOS\RestBundle\FOSRestBundle(),
+            new \Nelmio\CorsBundle\NelmioCorsBundle(),
             new AppBundle\AppBundle(),
         ];
 

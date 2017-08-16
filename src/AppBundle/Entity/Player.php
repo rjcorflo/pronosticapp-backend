@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Entity\Extensions\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class Player.
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="players")
  * @ORM\HasLifecycleCallbacks
  */
-class Player
+class Player implements UserInterface
 {
     use Timestampable;
 
@@ -298,6 +299,38 @@ class Player
     {
         return $this->participations;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRoles()
+    {
+        return ['ROLE_USER'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSalt()
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUsername()
+    {
+        return $this->nickname;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials()
+    {
+    }
+
 
     public function __toString()
     {

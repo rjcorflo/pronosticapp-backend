@@ -3,7 +3,7 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
     - { resource: admin/design.yml }
-#    - { resource: admin/ }
+    - { resource: admin/backend.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -81,6 +81,26 @@ fos_rest:
             - { path: ^/api, priorities: [ json ], fallback_format: json, prefer_extension: true }
             - { path: ^/, stop: true }
 
+nelmio_cors:
+        defaults:
+            allow_credentials: false
+            allow_origin: []
+            allow_headers: []
+            allow_methods: []
+            expose_headers: []
+            max_age: 0
+            hosts: []
+            origin_regex: false
+            forced_allow_origin_value: ~
+        paths:
+            '^/api/':
+                allow_origin: ['*']
+                allow_headers: ['X-Auth-Token']
+                allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+                max_age: 3600
+            '^/':
+                allow_methods: ['POST', 'GET']
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: '%mailer_transport%'
@@ -88,99 +108,6 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
-
-easy_admin:
-    design:
-        form_theme: horizontal
-        menu:
-            - { label: Players }
-            - { entity: Player, icon: user }
-            - Token
-            - Community
-            - Participant
-            - { label: Matchday }
-            - Competition
-            - Phase
-            - Matchday
-            - Match
-            - { label: Classifications }
-            - Forecast
-            - MatchdayClassification
-            - GeneralClassification
-            - { label: Teams data }
-            - Team
-            - Stadium
-            - { label: Users }
-            - User
-            - { label: Other }
-            - Image
-    entities:
-        Community:
-            class: AppBundle\Entity\Community
-        Competition:
-            class: AppBundle\Entity\Competition
-        Forecast:
-            class: AppBundle\Entity\Forecast
-        GeneralClassification:
-            class: AppBundle\Entity\GeneralClassification
-        Image:
-            class: AppBundle\Entity\Image
-            list:
-                actions:
-                    - { name: 'show', label: '', icon: 'search' }
-                    - { name: 'edit', label: '', icon: 'edit' }
-                    - { name: 'delete', label: '', icon: 'trash' }
-                fields:
-                    - id
-                    - imageType
-                    - description
-                    - { property: 'image', type: 'image', base_path: '%app.path.images%' }
-            form:
-                fields:
-                    - imageType
-                    - description
-                    - { property: 'imageFile', type: 'vich_image' }
-        Match:
-            class: AppBundle\Entity\Match
-        Matchday:
-            class: AppBundle\Entity\Matchday
-        MatchdayClassification:
-            class: AppBundle\Entity\MatchdayClassification
-        Participant:
-            class: AppBundle\Entity\Participant
-        Phase:
-            class: AppBundle\Entity\Phase
-        Player:
-            class: AppBundle\Entity\Player
-        Stadium:
-            class: AppBundle\Entity\Stadium
-            list:
-                actions:
-                    - { name: 'show', label: '', icon: 'search' }
-                    - { name: 'edit', label: '', icon: 'edit' }
-                    - { name: 'delete', label: '', icon: 'trash' }
-                fields:
-                    - id
-                    - name
-                    - city
-                    - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
-            show:
-                fields:
-                    - id
-                    - name
-                    - city
-                    - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
-            form:
-                fields:
-                    - name
-                    - city
-                    - image
-        Team:
-            class: AppBundle\Entity\Team
-        Token:
-            class: AppBundle\Entity\Token
-        User:
-            class: AppBundle\Entity\User
 
 doctrine_migrations:
     dir_name: "%kernel.root_dir%/DoctrineMigrations"
