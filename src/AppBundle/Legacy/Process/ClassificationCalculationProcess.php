@@ -202,9 +202,9 @@ class ClassificationCalculationProcess
             $classificationUpdated = true;
         }
 
-        if ($classificationUpdated) {
+        //if ($classificationUpdated) {
             $this->updateClassification($matchday, $community);
-        }
+        //}
 
         return $classificationUpdated;
     }
