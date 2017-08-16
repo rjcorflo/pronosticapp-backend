@@ -89,11 +89,11 @@ class PlayerCommunityTransformer extends TransformerAbstract
         }
 
         $nextMatchday = $this->matchdayRepository->getNextMatchday();
-        /** @var GeneralClassification $general */
+        /** @var GeneralClassification $generalClassification */
         $generalClassification = $this->generalClassRepo->findOneBy(['player' => $player, 'community' => $community, 'matchday' => $nextMatchday]);
 
         if ($generalClassification  !== null) {
-            $resource['puesto_general'] = $general->getPosition();
+            $resource['puesto_general'] = $generalClassification->getPosition();
         }
 
         return $resource;
