@@ -39,8 +39,7 @@ class GeneralClassificationRepository extends EntityRepository
         Community $community,
         Matchday $nextMatchday,
         \DateTime $date = null
-    ): array
-    {
+    ): array {
         $queryBuilder = $this->createQueryBuilder('g');
         $queryBuilder
             ->where($queryBuilder->expr()->eq('g.community', ':community'))
@@ -73,8 +72,7 @@ class GeneralClassificationRepository extends EntityRepository
     public function findOrderedByMatchdayAndCommunity(
         Matchday $matchday,
         Community $community
-    ): array
-    {
+    ): array {
         $classifications = $this->findBy(
             ['community' => $community, 'matchday' => $matchday],
             [
@@ -101,8 +99,7 @@ class GeneralClassificationRepository extends EntityRepository
     public function findMatchdaysWithGeneralClassificationUpdatedAfterDate(
         Community $community,
         \DateTime $date = null
-    ): array
-    {
+    ): array {
         $queryBuilder = $this->createQueryBuilder('g');
         $queryBuilder
             ->select('DISTINCT(m) AS id')

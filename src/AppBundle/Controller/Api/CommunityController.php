@@ -165,7 +165,9 @@ class CommunityController extends FOSRestController implements TokenAuthenticate
             /** @var Community $community */
             $community = $communityRepository->find($idCommunity);
 
-            $players = $community->getParticipants()->map(function (Participant $participant) { return $participant->getPlayer(); })->toArray();
+            $players = $community->getParticipants()->map(function (Participant $participant) {
+                return $participant->getPlayer();
+            })->toArray();
 
             $resource = $this->resourceGenerator->exclude('comunidades.jugadores')->createPlayerResource($players);
 

@@ -24,7 +24,8 @@ class UtilController extends FOSRestController
      *
      * @return ResponseInterface
      */
-    public function serverDateAction(): ResponseInterface {
+    public function serverDateAction(): ResponseInterface
+    {
         $date = new \DateTime();
 
         $resource = [

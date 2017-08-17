@@ -133,7 +133,9 @@ class ClassificationCalculationProcess
     ): bool {
         $classificationUpdated = false;
 
-        $players = $community->getParticipants()->map( function (Participant $participant) { return $participant->getPlayer(); } )->toArray();
+        $players = $community->getParticipants()->map(function (Participant $participant) {
+            return $participant->getPlayer();
+        })->toArray();
 
         foreach ($players as $player) {
             /** @var MatchdayClassification $classification */

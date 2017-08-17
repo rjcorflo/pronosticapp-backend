@@ -49,7 +49,9 @@ class PlayerTransformer extends TransformerAbstract
      */
     public function includeComunidades(Player $player)
     {
-        $communities = array_map(function (Participant $object) { return $object->getCommunity(); }, $player->getParticipations()->toArray());
+        $communities = array_map(function (Participant $object) {
+            return $object->getCommunity();
+        }, $player->getParticipations()->toArray());
 
         return $this->collection($communities, CommunityTransformer::class);
     }

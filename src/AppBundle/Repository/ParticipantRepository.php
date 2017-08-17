@@ -111,8 +111,7 @@ class ParticipantRepository extends EntityRepository
     public function findByPlayerAndCommunity(
         Player $player,
         Community $community
-    ): Participant
-    {
+    ): Participant {
         /** @var Participant $participant */
         $participant = $this->findOneBy(['community' => $community->getId(), 'player' => $player->getId()]);
 
@@ -143,8 +142,7 @@ class ParticipantRepository extends EntityRepository
     public function checkIfPlayerIsAlreadyFromCommunity(
         Player $player,
         Community $community
-    ): bool
-    {
+    ): bool {
         return $this->countBy(['community' => $community->getId(), 'player' => $player->getId()]) > 0;
     }
 
