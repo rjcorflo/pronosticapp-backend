@@ -7,10 +7,7 @@ require 'recipe/symfony3.php';
 set('repository', 'https://github.com/rjcorflo/pronosticapp-backend');
 set('git_tty', false); // [Optional] Allocate tty for git on first deployment
 
-// Environment vars
-set('env_vars', 'APP_ENV={{env}}');
-
-add('shared_files', []);
+set('shared_files', ['.env']);
 add('shared_dirs', ['var/data', 'public/uploads']);
 set('writable_dirs', []);
 
@@ -24,13 +21,13 @@ set('assets', ['public/css', 'public/images', 'public/js']);
  * Install assets from public dir of bundles
  */
 task('deploy:assets:install', function () {
-    run('{{env_vars}} {{bin/php}} {{bin/console}} assets:install {{console_options}} {{release_path}}/public');
+    run('{{bin/php}} {{bin/console}} assets:install {{console_options}} {{release_path}}/public');
 })->desc('Install bundle assets');
 
 // Hosts
 host('solus-dev')
     ->hostname('solus')
-    ->stage('development')
+    ->stage('production')
     ->roles('app')
     ->set('deploy_path', '~/applications/pronosticapp/production')
     ->set('branch', 'dev-flex')
@@ -51,5 +48,4 @@ task('php-fpm:restart', function () {
 after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
-
 before('deploy:symlink', 'database:migrate');
