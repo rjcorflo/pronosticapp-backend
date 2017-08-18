@@ -1,0 +1,120 @@
+easy_admin:
+    site_name: 'ACME Backend'
+    design:
+        form_theme:   'vertical'
+        color_scheme: 'dark'
+        assets:
+            css:
+                - '/assets/stylesheets/demo.css'
+        form_theme: horizontal
+        menu:
+            - { label: Players }
+            - { entity: Player, icon: user }
+            - Token
+            - Community
+            - Participant
+            - { label: Matchday }
+            - Competition
+            - Phase
+            - Matchday
+            - Match
+            - { label: Classifications }
+            - Forecast
+            - MatchdayClassification
+            - GeneralClassification
+            - { label: Teams data }
+            - Team
+            - Stadium
+            - { label: Users }
+            - User
+            - { label: Other }
+            - Image
+    entities:
+        Community:
+            class: App\Entity\Community
+        Competition:
+            class: App\Entity\Competition
+        Forecast:
+            class: App\Entity\Forecast
+        GeneralClassification:
+            class: App\Entity\GeneralClassification
+        Image:
+            class: App\Entity\Image
+            list:
+                actions:
+                    - { name: 'show', label: '', icon: 'search' }
+                    - { name: 'edit', label: '', icon: 'edit' }
+                    - { name: 'delete', label: '', icon: 'trash' }
+                fields:
+                    - id
+                    - imageType
+                    - description
+                    - { property: 'image', type: 'image', base_path: '%app.path.images%' }
+            form:
+                fields:
+                    - imageType
+                    - description
+                    - { property: 'imageFile', type: 'vich_image' }
+        Match:
+            class: App\Entity\Match
+        Matchday:
+            class: App\Entity\Matchday
+        MatchdayClassification:
+            class: App\Entity\MatchdayClassification
+        Participant:
+            class: App\Entity\Participant
+            form:
+                fields:
+                    - player
+                    - community
+        Phase:
+            class: App\Entity\Phase
+        Player:
+            class: App\Entity\Player
+            controller: App\Controller\Admin\PlayerController
+            new:
+                fields: [ nickname, email, password, firstName, lastName, avatar, color ]
+            edit:
+                fields:
+                    - nickname
+                    - email
+                    - { property: 'plainPassword', label: 'New password', type: 'password'}
+                    - firstName
+                    - lastName
+                    - avatar
+                    - color
+        Stadium:
+            class: App\Entity\Stadium
+            list:
+                actions:
+                    - { name: 'show', label: '', icon: 'search' }
+                    - { name: 'edit', label: '', icon: 'edit' }
+                    - { name: 'delete', label: '', icon: 'trash' }
+                fields:
+                    - id
+                    - name
+                    - city
+                    - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
+            show:
+                fields:
+                    - id
+                    - name
+                    - city
+                    - { property: 'stadiumImage', type: 'image', base_path: '%app.path.images%' }
+            form:
+                fields:
+                    - name
+                    - city
+                    - image
+        Team:
+            class: App\Entity\Team
+        Token:
+            class: App\Entity\Token
+        User:
+            class: App\Entity\User
+#easy_admin:
+#    entities:
+#        # List the entity class name you want to manage
+#        - App\Entity\Product
+#        - App\Entity\Category
+#        - App\Entity\User
