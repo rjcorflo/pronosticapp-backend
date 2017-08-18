@@ -294,18 +294,18 @@ class ClassificationCalculationProcess
         MatchdayClassification $classification,
         int $factor
     ) {
+        if ($this->positionPoints > 0 && $index < 3) {
+            $this->positionPoints--;
+        } else {
+            $this->positionPoints = 0;
+        }
+
         $classification->setPointsForPosition($this->positionPoints);
 
         $totalPoints = ($classification->getBasicPoints() * $factor) + $classification->getPointsForPosition();
         $classification->setTotalPoints($totalPoints);
 
         $classification->setPosition($this->position++);
-
-        if ($this->positionPoints > 0 && $index < 3) {
-            $this->positionPoints--;
-        } else {
-            $this->positionPoints = 0;
-        }
     }
 
     /**
