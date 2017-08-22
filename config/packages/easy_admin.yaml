@@ -46,8 +46,6 @@ easy_admin:
                     - community
                     - position
                     - totalPoints
-                    - basicPoints
-                    - pointsForPosition
                     - updated
         Image:
             class: App\Entity\Image
