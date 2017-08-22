@@ -30,7 +30,7 @@ host('solus-dev')
     ->stage('production')
     ->roles('app')
     ->set('deploy_path', '~/applications/pronosticapp/production')
-    ->set('branch', 'dev-flex')
+    ->set('branch', 'dev')
     ->configFile('~/.ssh/config');
 
 
