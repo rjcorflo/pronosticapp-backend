@@ -37,6 +37,18 @@ easy_admin:
             class: App\Entity\Forecast
         GeneralClassification:
             class: App\Entity\GeneralClassification
+            controller: App\Controller\Admin\ClassificationController
+            list:
+                fields:
+                    - id
+                    - player
+                    - matchday
+                    - community
+                    - position
+                    - totalPoints
+                    - basicPoints
+                    - pointsForPosition
+                    - updated
         Image:
             class: App\Entity\Image
             list:
@@ -60,13 +72,15 @@ easy_admin:
             class: App\Entity\Matchday
         MatchdayClassification:
             class: App\Entity\MatchdayClassification
-            controller: App\Controller\Admin\MatchdayClassificationController
+            controller: App\Controller\Admin\ClassificationController
             list:
                 fields:
                     - id
                     - player
                     - matchday
                     - community
+                    - position
+                    - totalPoints
                     - basicPoints
                     - pointsForPosition
                     - updated

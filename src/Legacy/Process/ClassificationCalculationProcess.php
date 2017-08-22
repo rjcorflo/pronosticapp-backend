@@ -114,6 +114,9 @@ class ClassificationCalculationProcess
 
                 if ($classificationUpdated) {
                     $this->entityManager->flush();
+
+                    $this->updateClassification($matchday, $community);
+
                     $this->calculateGeneralClassificationForCommunity($matchday, $community);
                 }
             }
@@ -201,10 +204,6 @@ class ClassificationCalculationProcess
 
             // Classification has been updated
             $classificationUpdated = true;
-        }
-
-        if ($classificationUpdated) {
-            $this->updateClassification($matchday, $community);
         }
 
         return $classificationUpdated;

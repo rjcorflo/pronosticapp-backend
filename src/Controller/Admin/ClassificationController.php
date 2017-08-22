@@ -4,22 +4,9 @@ namespace App\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use JavierEguiluz\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
-use Psr\Log\LoggerInterface;
 
-class MatchdayClassificationController extends BaseAdminController
+class ClassificationController extends BaseAdminController
 {
-    /** @var LoggerInterface  */
-    private $logger;
-
-    /**
-     * @inheritDoc
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-
     /**
      * This method overrides the default query builder used to search for this
      * entity. This allows to make a more complex search joining related entities.
