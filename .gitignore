@@ -1,42 +1,22 @@
 # IDE
 .idea
 
-# Symfony
-/.web-server-pid
-/build/
-
-# Cache and logs (Symfony3)
-/var/*
-!/var/cache
-/var/cache/*
-!var/cache/.gitkeep
-!/var/logs
-/var/logs/*
-!var/logs/.gitkeep
-!var/SymfonyRequirements.php
-!var/data/
-var/data/*
-!var/data/.gitkeep
-!/var/sessions
-/var/sessions/*
-!var/sessions/.gitkeep
-
-# Parameters
-/app/config/parameters.yml
-
-# Managed by Composer
-/vendor/
-
-# Assets and user uploads
-/web/bundles/
-/web/uploads/
-
-# PHPUnit
-/phpunit.xml
-
-# Composer PHAR
-/composer.phar
+# Assets
+/public/uploads
 
 # Others
 .php_cs.cache
 php_errors.log
+
+###> symfony/framework-bundle ###
+.env
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+###> symfony/phpunit-bridge ###
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+###> symfony/web-server-bundle ###
+.web-server-pid
+###< symfony/web-server-bundle ###
