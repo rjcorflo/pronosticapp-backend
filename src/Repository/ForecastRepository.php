@@ -20,13 +20,13 @@ class ForecastRepository extends EntityRepository
     ): array {
         $qb = $this->createQueryBuilder('f');
         $qb
-            ->join('f.match', 'm', Expr\Join::WITH, 'm.matchday = :matchday_id')
-            ->where($qb->expr()->eq('f.player', ':player_id'))
-            ->andWhere($qb->expr()->eq('f.community', ':community_id'))
+            ->join('f.match', 'm', Expr\Join::WITH, 'm.matchday = :matchday')
+            ->where($qb->expr()->eq('f.player', ':player'))
+            ->andWhere($qb->expr()->eq('f.community', ':community'))
             ->setParameters([
-                'matchday_id' => $matchday->getId(),
-                'player_id' => $player->getId(),
-                'community_id' => $community->getId()
+                'matchday' => $matchday,
+                'player' => $player,
+                'community' => $community
             ]);
 
         $forecasts = $qb->getQuery()->getResult();

@@ -60,6 +60,16 @@ easy_admin:
             class: App\Entity\Matchday
         MatchdayClassification:
             class: App\Entity\MatchdayClassification
+            controller: App\Controller\Admin\MatchdayClassificationController
+            list:
+                fields:
+                    - id
+                    - player
+                    - matchday
+                    - community
+                    - basicPoints
+                    - pointsForPosition
+                    - updated
         Participant:
             class: App\Entity\Participant
             form:

@@ -352,6 +352,6 @@ class Player implements UserInterface
 
     public function __toString()
     {
-        return sprintf('%d - %s - %s %s', $this->getId(), $this->getNickname(), $this->getFirstName(), $this->getLastName());
+        return sprintf('%d - %s', $this->getId(), $this->getNickname());
     }
 }

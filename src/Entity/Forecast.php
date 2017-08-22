@@ -266,9 +266,6 @@ class Forecast
         } elseif ($match->getLocalGoals() == -1 && $match->getAwayGoals() == -1) {
             $this->setPoints(0);
             return;
-        } elseif ($this->getUpdated() > $match->getStartTime()) {
-            $this->setPoints(0);
-            return;
         }
 
         // Calculate points
