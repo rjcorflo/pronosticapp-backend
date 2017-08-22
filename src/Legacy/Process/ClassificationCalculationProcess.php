@@ -133,14 +133,13 @@ class ClassificationCalculationProcess
     ): bool {
         $classificationUpdated = false;
 
-        $players = $community->getParticipants()->map(function (Participant $participant) {
-            return $participant->getPlayer();
-        })->toArray();
+        $participants = $community->getParticipants();
 
-        foreach ($players as $player) {
+        /** @var Participant $participant */
+        foreach ($participants as $participant) {
             /** @var MatchdayClassification $classification */
             $classification = $this->matchdayClassRepo->findOneBy([
-                    'player' => $player,
+                    'player' => $participant->getPlayer(),
                     'community' => $community,
                     'matchday' => $matchday
                 ]
@@ -160,7 +159,7 @@ class ClassificationCalculationProcess
             }
 
             /** @var Forecast[] $forecasts */
-            $forecasts = $this->forecastRepository->findAllFromCommunity($community, $player, $matchday);
+            $forecasts = $this->forecastRepository->findAllFromCommunity($community, $participant->getPlayer(), $matchday);
 
             $points = 0;
             $hitsTen = 0;
@@ -185,7 +184,7 @@ class ClassificationCalculationProcess
             }
 
             $classification->setCommunity($community);
-            $classification->setPlayer($player);
+            $classification->setPlayer($participant->getPlayer());
             $classification->setMatchday($matchday);
             $classification->setBasicPoints($points);
             $classification->setTotalPoints(0);
@@ -204,9 +203,9 @@ class ClassificationCalculationProcess
             $classificationUpdated = true;
         }
 
-        //if ($classificationUpdated) {
+        if ($classificationUpdated) {
             $this->updateClassification($matchday, $community);
-        //}
+        }
 
         return $classificationUpdated;
     }

@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Community;
-use App\Entity\Match;
 use App\Entity\Matchday;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
@@ -19,11 +18,16 @@ class MatchdayRepository extends EntityRepository
     /**
      * Get next or actual matchday.
      *
-     * @return null | Matchday
+     * @param \DateTime|null $date
+     * @return Matchday|null
      */
-    public function getNextMatchday(): ?Matchday
+    public function getNextMatchday(\DateTime $date = null): ?Matchday
     {
-        $actualDate = new \DateTime();
+        if ($date === null) {
+            $filterDate = new \DateTime();
+        } else {
+            $filterDate = $date;
+        }
 
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
@@ -32,13 +36,13 @@ class MatchdayRepository extends EntityRepository
             ->where($queryBuilder->expr()->gt('m.startTime', ':date'))
             ->orderBy('m.startTime', 'ASC')
             ->setMaxResults(1)
-            ->setParameter('date', $actualDate, Type::DATETIME);
+            ->setParameter('date', $filterDate, Type::DATETIME);
 
         $match = $queryBuilder->getQuery()->getOneOrNullResult();
 
         if ($match === null) {
             /** @var Matchday | null $matchday */
-            $matchday = $this->findOneBy([], ['id' => 'DESC']);
+            $matchday = $this->findOneBy([], ['id' => 'ASC']);
             return $matchday;
         }
 
@@ -48,11 +52,16 @@ class MatchdayRepository extends EntityRepository
     /**
      * Get last completed matchday.
      *
+     * @param \DateTime|null $date
      * @return Matchday
      */
-    public function getLastMatchday(): Matchday
+    public function getLastMatchday(\DateTime $date = null): Matchday
     {
-        $actualDate = \DateTime::createFromFormat('Y-m-d', '2017-08-30');//new \DateTime();
+        if ($date === null) {
+            $filterDate = new \DateTime();
+        } else {
+            $filterDate = $date;
+        }
 
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
@@ -63,7 +72,7 @@ class MatchdayRepository extends EntityRepository
             ->groupBy('ma.id')
             ->orderBy('time', 'DESC')
             ->setMaxResults(1)
-            ->setParameter('date', $actualDate, Type::DATETIME);
+            ->setParameter('date', $filterDate, Type::DATETIME);
 
         $result = $queryBuilder->getQuery()->getOneOrNullResult();
 

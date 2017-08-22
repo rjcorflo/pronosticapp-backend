@@ -54,7 +54,7 @@ class MatchRepository extends EntityRepository
         $queryBuilder
             ->select('COUNT(m.id)')
             ->where($queryBuilder->expr()->eq('m.matchday', ':matchday'))
-            ->andWhere($queryBuilder->expr()->gt('m.startTime', ':date'))
+            ->andWhere($queryBuilder->expr()->gt('m.updated', ':date'))
             ->setParameter('matchday', $matchday)
             ->setParameter('date', $date, Type::DATETIME);
 
