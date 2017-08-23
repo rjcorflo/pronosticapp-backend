@@ -4,7 +4,10 @@ namespace App\Legacy\WebResource\Fractal\Transformer;
 
 use App\Entity\Forecast;
 use App\Entity\Match;
+use App\Entity\Player;
+use App\EventSubscriber\TokenSubscriber;
 use League\Fractal\TransformerAbstract;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class ForecastTransformer
@@ -13,6 +16,31 @@ use League\Fractal\TransformerAbstract;
  */
 class ForecastTransformer extends TransformerAbstract
 {
+    /**
+     * @var null|\Symfony\Component\HttpFoundation\Request
+     */
+    private $request;
+
+    /**
+     * ForecastTransformer constructor.
+     *
+     * @param RequestStack $stack
+     */
+    public function __construct(RequestStack $stack)
+    {
+        $this->request = $stack->getCurrentRequest();
+    }
+
+    /**
+     * Get player from request. See {@see TokenSubscriber}.
+     *
+     * @return Player
+     */
+    private function getPlayerFromRequest()
+    {
+        return $this->request->attributes->get('player');
+    }
+
     /**
      * @param Forecast $forecast
      * @return array
@@ -29,10 +57,15 @@ class ForecastTransformer extends TransformerAbstract
             'puntos' => $forecast->getPoints()
         ];
 
-        $resource['goles_local'] = $forecast->getMatch()->getState() === Match::STATE_NOT_PLAYED ?
-            -1 : $forecast->getLocalGoals();
-        $resource['goles_visitante'] = $forecast->getMatch()->getState() === Match::STATE_NOT_PLAYED ?
-            -1 : $forecast->getAwayGoals();
+        if ($forecast->getPlayer() === $this->getPlayerFromRequest()) {
+            $resource['goles_local'] = $forecast->getLocalGoals();
+            $resource['goles_visitante'] = $forecast->getAwayGoals();
+        } else {
+            $resource['goles_local'] = $forecast->getMatch()->getState() === Match::STATE_NOT_PLAYED ?
+                -1 : $forecast->getLocalGoals();
+            $resource['goles_visitante'] = $forecast->getMatch()->getState() === Match::STATE_NOT_PLAYED ?
+                -1 : $forecast->getAwayGoals();
+        }
 
         return $resource;
     }
