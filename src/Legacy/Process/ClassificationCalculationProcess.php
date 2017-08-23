@@ -117,11 +117,14 @@ class ClassificationCalculationProcess
 
                     $this->updateClassification($matchday, $community);
 
+                    $this->entityManager->flush();
+
                     $this->calculateGeneralClassificationForCommunity($matchday, $community);
                 }
+
+                $this->entityManager->flush();
             }
 
-            $this->entityManager->flush();
         }
     }
 
@@ -328,7 +331,7 @@ class ClassificationCalculationProcess
                 $classification = $this->generalClassRepo->findOneBy([
                         'player' => $player,
                         'community' => $community,
-                        'matchday' => $matchday
+                        'matchday' => $matchdayToUpdate
                     ]
                 );
 
@@ -337,7 +340,7 @@ class ClassificationCalculationProcess
                 }
 
                 $classification->setPlayer($player);
-                $classification->setMatchday($matchday);
+                $classification->setMatchday($matchdayToUpdate);
                 $classification->setCommunity($community);
                 $classification->setTotalPoints($result['points']);
                 $classification->setHitsTenPoints($result['hits10']);
