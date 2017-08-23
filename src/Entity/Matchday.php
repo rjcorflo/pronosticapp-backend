@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Extensions\Timestampable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -59,6 +61,22 @@ class Matchday
      * @ORM\Column(type="integer")
      */
     private $matchdayOrder;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Match", mappedBy="matchday")
+     */
+    private $matches;
+
+    /**
+     * Matchday constructor.
+     */
+    public function __construct()
+    {
+        $this->matches = new ArrayCollection();
+    }
+
 
     /**
      * Get id
@@ -188,6 +206,39 @@ class Matchday
     public function getPhase()
     {
         return $this->phase;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getMatches()
+    {
+        return $this->matches;
+    }
+
+    /**
+     * Add new match.
+     *
+     * @param Match $match
+     * @return $this
+     */
+    public function addMatch(Match $match)
+    {
+        if (!$this->matches->contains($match)) {
+            $this->matches->add($match);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove match.
+     *
+     * @param Match $match
+     */
+    public function removeMatch(Match $match)
+    {
+        $this->matches->removeElement($match);
     }
 
     public function __toString()

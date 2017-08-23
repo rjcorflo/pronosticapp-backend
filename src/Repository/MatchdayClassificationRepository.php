@@ -10,42 +10,32 @@ use Doctrine\ORM\EntityRepository;
 class MatchdayClassificationRepository extends EntityRepository
 {
     /**
-     * Find classification for community.
-     *
-     * @param Community $community
-     * @return MatchdayClassification[]
-     */
-    public function findByCommunity(Community $community): array
-    {
-        $classification = $this->findBy(['community' => $community]);
-        return $classification;
-    }
-
-    /**
-     * Find classifications for community only after next matchday (or actual).
+     * Find classifications for community only before passed matchday.
      * If a date is passed, only modified records after that date are returned.
      *
      * @param Community $community
-     * @param Matchday $nextMatchday
+     * @param Matchday $matchday
      * @param \DateTime|null $date
      * @return array
      */
     public function findByCommunityUntilNextMatchdayModifiedAfterDate(
         Community $community,
-        Matchday $nextMatchday,
+        Matchday $matchday,
         \DateTime $date = null
     ): array {
         $queryBuilder = $this->createQueryBuilder('clas');
         $queryBuilder
             ->where($queryBuilder->expr()->eq('clas.community', ':community'))
             ->andWhere($queryBuilder->expr()->lte('clas.matchday', ':matchday'))
-            ->setParameters(['community' => $community, 'matchday' => $nextMatchday]);
+            ->setParameters(['community' => $community, 'matchday' => $matchday]);
 
         if ($date !== null) {
             $queryBuilder
                 ->andWhere($queryBuilder->expr()->gt('clas.updated', ':date'))
                 ->setParameter('date', $date);
         }
+
+        $queryBuilder->orderBy('clas.position', 'ASC');
 
         $classifications = $queryBuilder->getQuery()->getResult();
 
@@ -79,10 +69,10 @@ class MatchdayClassificationRepository extends EntityRepository
         return $classifications;
     }
 
-    public function retrieveGeneralDataForAllUSers(Community $community, Matchday $matchday)
+    public function retrieveGeneralDataForAllUsers(Community $community, Matchday $matchday)
     {
         $dql = $this->getEntityManager()->createQuery(
-            'SELECT m as matchday, p AS player,
+            'SELECT p.id AS player_id,
                     SUM(m.totalPoints) AS points,
                     SUM(m.hitsTenPoints) as hits10,
                     SUM(m.hitsFivePoints) as hits5,
@@ -112,7 +102,7 @@ class MatchdayClassificationRepository extends EntityRepository
                 JOIN m.player p
                WHERE m.community = :community
                  AND m.matchday <= :matchday
-               GROUP BY p
+               GROUP BY p.id
             '
         )->setParameters(['community' => $community, 'matchday' => $matchday]);
 

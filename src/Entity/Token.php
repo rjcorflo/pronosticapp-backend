@@ -25,6 +25,7 @@ class Token
      * @var Player
      *
      * @ORM\ManyToOne(targetEntity="Player", fetch="EAGER")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $player;
 

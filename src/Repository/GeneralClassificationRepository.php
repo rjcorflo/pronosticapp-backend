@@ -16,53 +16,6 @@ use Doctrine\ORM\EntityRepository;
 class GeneralClassificationRepository extends EntityRepository
 {
     /**
-     * Find classification for community.
-     *
-     * @param Community $community
-     * @return GeneralClassification[]
-     */
-    public function findByCommunity(Community $community): array
-    {
-        $this->findBy(['community' => $community]);
-    }
-
-    /**
-     * Find classifications for community only until next matchday (or actual).
-     * If a date is passed, only modified records after that date are returned.
-     *
-     * @param Community $community
-     * @param Matchday $nextMatchday
-     * @param \DateTime|null $date
-     * @return array
-     */
-    public function findByCommunityUntilNextMatchdayModifiedAfterDate(
-        Community $community,
-        Matchday $nextMatchday,
-        \DateTime $date = null
-    ): array {
-        $queryBuilder = $this->createQueryBuilder('g');
-        $queryBuilder
-            ->where($queryBuilder->expr()->eq('g.community', ':community'))
-            ->andWhere($queryBuilder->expr()->eq('g.matchday', ':matchday'));
-
-        if ($date !== null) {
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->gt('g.updated', ':date'))
-                ->setParameter('date', $date);
-        }
-
-        $queryBuilder
-            ->orderBy('g.position', 'ASC')
-            ->setParameters([
-               'community' => $community,
-               'matchday' => $nextMatchday
-            ]);
-
-        $matches = $queryBuilder->getQuery()->getResult();
-        return $matches;
-    }
-
-    /**
      * Return classification for one community and one matchday.
      *
      * @param Matchday $matchday

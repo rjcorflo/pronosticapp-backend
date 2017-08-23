@@ -36,3 +36,7 @@ services:
 
     App\Legacy\WebResource\WebResourceGeneratorInterface: '@App\Legacy\WebResource\Fractal\FractalGenerator'
     App\Legacy\Util\Validation\ValidatorInterface: '@App\Legacy\Util\Validation\GeneralValidator'
+
+    App\EventSubscriber\SQLitePragmaActivator:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }

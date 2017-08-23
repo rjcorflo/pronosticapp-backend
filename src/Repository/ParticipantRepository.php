@@ -55,9 +55,9 @@ class ParticipantRepository extends EntityRepository
         }
 
         $queryBuilder
-            ->where($queryBuilder->expr()->eq('pa.community', ':community_id'))
+            ->where($queryBuilder->expr()->eq('pa.community', ':community'))
             ->orderBy('p.nickname', 'ASC')
-            ->setParameter('community_id', $community->getId());
+            ->setParameter('community', $community);
 
         $players = $queryBuilder->getQuery()->getResult();
 
@@ -113,7 +113,7 @@ class ParticipantRepository extends EntityRepository
         Community $community
     ): Participant {
         /** @var Participant $participant */
-        $participant = $this->findOneBy(['community' => $community->getId(), 'player' => $player->getId()]);
+        $participant = $this->findOneBy(['community' => $community, 'player' => $player]);
 
         if ($participant === null) {
             $exception = new NotFoundException();
@@ -143,7 +143,7 @@ class ParticipantRepository extends EntityRepository
         Player $player,
         Community $community
     ): bool {
-        return $this->countBy(['community' => $community->getId(), 'player' => $player->getId()]) > 0;
+        return $this->countBy(['community' => $community, 'player' => $player]) > 0;
     }
 
     /**
@@ -154,7 +154,7 @@ class ParticipantRepository extends EntityRepository
      */
     public function countPlayersFromCommunity(Community $community): int
     {
-        return $this->countBy(['community' => $community->getId()]);
+        return $this->countBy(['community' => $community]);
     }
 
     /**
@@ -165,6 +165,6 @@ class ParticipantRepository extends EntityRepository
      */
     public function countCommunitiesFromPlayer(Player $player): int
     {
-        return $this->countBy(['player' => $player->getId()]);
+        return $this->countBy(['player' => $player]);
     }
 }

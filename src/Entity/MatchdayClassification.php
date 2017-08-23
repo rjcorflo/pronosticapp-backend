@@ -29,6 +29,7 @@ class MatchdayClassification
      * @var Player
      *
      * @ORM\ManyToOne(targetEntity="Player", fetch="EAGER")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $player;
 
@@ -36,6 +37,7 @@ class MatchdayClassification
      * @var Community
      *
      * @ORM\ManyToOne(targetEntity="Community", fetch="EAGER")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $community;
 
@@ -43,6 +45,7 @@ class MatchdayClassification
      * @var Matchday
      *
      * @ORM\ManyToOne(targetEntity="Matchday", fetch="EAGER")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $matchday;
 

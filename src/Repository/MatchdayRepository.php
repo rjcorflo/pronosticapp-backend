@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Community;
+use App\Entity\Match;
 use App\Entity\Matchday;
+use App\Legacy\Model\Exception\PronosticAppException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 
@@ -16,10 +18,11 @@ use Doctrine\ORM\EntityRepository;
 class MatchdayRepository extends EntityRepository
 {
     /**
-     * Get next or actual matchday.
+     * Get matchday of next match after date.
      *
      * @param \DateTime|null $date
      * @return Matchday|null
+     * @throws PronosticAppException    If there is no matchday.
      */
     public function getNextMatchday(\DateTime $date = null): ?Matchday
     {
@@ -40,9 +43,10 @@ class MatchdayRepository extends EntityRepository
 
         $match = $queryBuilder->getQuery()->getOneOrNullResult();
 
+        // If no there are no match after date, get matchday of last match
         if ($match === null) {
             /** @var Matchday | null $matchday */
-            $matchday = $this->findOneBy([], ['id' => 'ASC']);
+            $matchday = $this->getLastMatchday($date);
             return $matchday;
         }
 
@@ -50,10 +54,11 @@ class MatchdayRepository extends EntityRepository
     }
 
     /**
-     * Get last completed matchday.
+     * Get matchday of last played/started match.
      *
      * @param \DateTime|null $date
      * @return Matchday
+     * @throws PronosticAppException    If there is no matchday.
      */
     public function getLastMatchday(\DateTime $date = null): Matchday
     {
@@ -65,23 +70,33 @@ class MatchdayRepository extends EntityRepository
 
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
-            ->select('m as match', 'MAX(m.startTime) AS time')
+            ->select('m')
             ->from('App:Match', 'm')
             ->innerJoin('m.matchday', 'ma')
             ->where($queryBuilder->expr()->lt('m.startTime', ':date'))
             ->groupBy('ma.id')
-            ->orderBy('time', 'DESC')
+            ->orderBy('m.startTime', 'DESC')
             ->setMaxResults(1)
             ->setParameter('date', $filterDate, Type::DATETIME);
 
-        $result = $queryBuilder->getQuery()->getOneOrNullResult();
+        /** @var Match $match */
+        $match = $queryBuilder->getQuery()->getOneOrNullResult();
 
-        if ($result === null) {
+        // If there are no matches before date, return first matchday.
+        if ($match === null) {
             /** @var Matchday | null $matchday */
-            $matchday = $this->findOneBy([], ['id', 'DESC']);
+            $matchday = $this->findOneBy([], ['id', 'ASC']);
+
+            // If there is no matchday, throw exception
+            if ($matchday === null) {
+                $e = new PronosticAppException();
+                $e->addDefaultMessage('No existen Jornadas');
+                throw $e;
+            }
+
             return $matchday;
         } else {
-            return $result['match']->getMatchday();
+            return $match->getMatchday();
         }
     }
 
@@ -99,9 +114,10 @@ class MatchdayRepository extends EntityRepository
 
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder
-            ->where($queryBuilder->expr()->lte('m.id', ':id'))
-            ->setParameter('id', $nextMatchday->getId());
+            ->where($queryBuilder->expr()->lte('m.matchdayOrder', ':order'))
+            ->setParameter('order', $nextMatchday->getMatchdayOrder());
 
+        /** @var Matchday[] $matchdays */
         $matchdays = $queryBuilder->getQuery()->getResult();
 
         return $matchdays;
@@ -109,7 +125,7 @@ class MatchdayRepository extends EntityRepository
 
 
     /**
-     * Return all matchdays ordered by matchday_order field.
+     * Return all matchdays ordered by matchdayOrder field.
      *
      * @return Matchday[]
      */

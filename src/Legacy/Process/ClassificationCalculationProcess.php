@@ -152,7 +152,7 @@ class ClassificationCalculationProcess
             // then don't update classification record
             if ($classification !== null) {
                 $existMatchesModified = $this->matchRepository
-                        ->countModifiedMatchesAfterDate($matchday, $classification->getUpdated()) > 0;
+                        ->existsMatchesModifiedAfterDate($matchday, $classification->getUpdated()) > 0;
 
                 if (!$existMatchesModified) {
                     continue;
@@ -320,10 +320,10 @@ class ClassificationCalculationProcess
         $matchdaysToUpdate = $this->matchdayRepository->findAllBetweenMatchdays($matchday, $nextMatchday);
 
         foreach ($matchdaysToUpdate as $matchdayToUpdate) {
-            $results = $this->matchdayClassRepo->retrieveGeneralDataForAllUSers($community, $matchdayToUpdate);
+            $results = $this->matchdayClassRepo->retrieveGeneralDataForAllUsers($community, $matchdayToUpdate);
 
             foreach ($results as $result) {
-                $player = $result['matchday']->getPlayer();
+                $player = $this->playerRepository->find($result['player_id']);
 
                 $classification = $this->generalClassRepo->findOneBy([
                         'player' => $player,

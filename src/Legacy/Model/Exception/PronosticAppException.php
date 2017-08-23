@@ -8,7 +8,7 @@ use App\Legacy\Util\General\MessageResult;
 /**
  * Base exception class for application.
  */
-abstract class PronosticAppException extends \Exception
+class PronosticAppException extends \Exception
 {
     /**
      * Response code.

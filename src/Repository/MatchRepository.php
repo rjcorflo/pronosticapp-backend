@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Community;
+use App\Entity\Match;
 use App\Entity\Matchday;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
@@ -10,9 +11,15 @@ use Doctrine\ORM\EntityRepository;
 class MatchRepository extends EntityRepository
 {
     /**
-     * @inheritDoc
+     * Return list of active matches for a certain matchday.
+     *
+     * Active matches are those whose startTime is greater than passed date (or actual date).
+     *
+     * @param int $idMatchday
+     * @param \DateTime|null $date      If date is NULL actual date is used.
+     * @return Match[]                  List of matches.
      */
-    public function findActivesByMatchday(int $idMatchday): array
+    public function findActivesByMatchday(int $idMatchday, \DateTime $date = null): array
     {
         $actualDate = new \DateTime();
 
@@ -28,7 +35,13 @@ class MatchRepository extends EntityRepository
     }
 
     /**
-     * @inheritDoc
+     * Find updated matches for a certain Community.
+     *
+     * TODO Now return all matches.
+     *
+     * @param Community $community
+     * @param \DateTime|null $date
+     * @return array
      */
     public function findByCommunity(Community $community, \DateTime $date = null): array
     {
@@ -46,9 +59,13 @@ class MatchRepository extends EntityRepository
     }
 
     /**
-     * @inheritDoc
+     * Return TRUE if there are matches updated after date for a certain matchday.
+     *
+     * @param Matchday $matchday
+     * @param \DateTime $date
+     * @return bool
      */
-    public function countModifiedMatchesAfterDate(Matchday $matchday, \DateTime $date): int
+    public function existsMatchesModifiedAfterDate(Matchday $matchday, \DateTime $date): bool
     {
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder
@@ -60,6 +77,6 @@ class MatchRepository extends EntityRepository
 
         $count = $queryBuilder->getQuery()->getSingleScalarResult();
 
-        return $count;
+        return $count > 0;
     }
 }

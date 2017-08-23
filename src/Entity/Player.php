@@ -84,7 +84,7 @@ class Player implements UserInterface
     private $color;
 
     /**
-     * @var Participant[]
+     * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="player")
      */
@@ -280,9 +280,11 @@ class Player implements UserInterface
      *
      * @return Player
      */
-    public function addParticipation(\App\Entity\Participant $participation)
+    public function addParticipation(Participant $participation)
     {
-        $this->participations[] = $participation;
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+        }
 
         return $this;
     }
@@ -292,7 +294,7 @@ class Player implements UserInterface
      *
      * @param \App\Entity\Participant $participation
      */
-    public function removeParticipation(\App\Entity\Participant $participation)
+    public function removeParticipation(Participant $participation)
     {
         $this->participations->removeElement($participation);
     }
@@ -300,7 +302,7 @@ class Player implements UserInterface
     /**
      * Get participations
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getParticipations()
     {

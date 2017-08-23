@@ -37,7 +37,8 @@ class Match
     /**
      * @var Matchday
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Matchday", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Matchday", fetch="EAGER", inversedBy="matches")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $matchday;
 

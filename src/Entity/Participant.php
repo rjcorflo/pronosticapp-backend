@@ -29,6 +29,7 @@ class Participant
      * @var Player
      *
      * @ORM\ManyToOne(targetEntity="Player", inversedBy="participations", fetch="EAGER")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $player;
 
@@ -36,6 +37,7 @@ class Participant
      * @var Community
      *
      * @ORM\ManyToOne(targetEntity="Community", inversedBy="participants", fetch="EAGER")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $community;
 
