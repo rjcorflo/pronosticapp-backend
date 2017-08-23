@@ -7,10 +7,10 @@ easy_admin:
             css:
                 - '/assets/stylesheets/demo.css'
         menu:
-            - { label: Players }
-            - { entity: Player, icon: user }
+            - { label: menu.players }
+            - { entity: Player, label: app.player,  icon: user }
             - Token
-            - Community
+            - { entity: Community, label: app.community }
             - Participant
             - { label: Matchday }
             - Competition

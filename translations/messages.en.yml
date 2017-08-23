@@ -18,27 +18,23 @@
 # The "main menu" is an example of defining the labels explicitly
 # (they are translated following the 1) method)
 # ------------------------------------------------------------------------------
-menu.category:     Categories
-menu.product:      Products
-menu.product.list: List Products
-menu.product.add:  Add Product
-menu.customer:     Customers
-menu.purchase:     Purchases
+menu.players: Players
 
 # We let EasyAdmin generate the rest of the backend labels
 # (they are translated following the 2) method)
 # ------------------------------------------------------------------------------
 
 # entity names, labels and titles
-Community: Comunidad
+app.player: Players
+app.community: Community
 Token: Token
-Player: Jugador
-Participant: Participante
-User: Usuario
-Stadium: Estadio
-Team: Equipo
-Private: Privada
-Participants: Participaciones
+Player: Player
+Participant: Participant
+User: User
+Stadium: Stadium
+Team: Team
+Private: Private
+Participants: Participants
 
 # entity properties
 Attachments: Attachments

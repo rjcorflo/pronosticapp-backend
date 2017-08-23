@@ -388,6 +388,6 @@ class Match
 
     public function __toString()
     {
-        return $this->getLocalTeam()->getName() . " vs " . $this->getAwayTeam()->getName();
+        return $this->getTag() . ' - ' . $this->getLocalTeam()->getName() . " vs " . $this->getAwayTeam()->getName();
     }
 }

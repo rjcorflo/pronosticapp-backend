@@ -2,14 +2,11 @@
 # recommended to translate your backend efficiently.
 
 # main menu
-menu.category:     Categorías
-menu.product:      Productos
-menu.product.list: Listado de Productos
-menu.product.add:  Añadir Producto
-menu.customer:     Clientes
-menu.purchase:     Ventas
+menu.players: Jugadores
 
 # entity names, labels and titles
+app.player: Jugador
+app.community: Comunidad
 Community: Comunidad
 Token: Token
 Player: Jugador
