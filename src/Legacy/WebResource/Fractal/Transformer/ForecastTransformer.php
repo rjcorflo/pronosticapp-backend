@@ -5,7 +5,6 @@ namespace App\Legacy\WebResource\Fractal\Transformer;
 use App\Entity\Forecast;
 use App\Entity\Match;
 use App\Entity\Player;
-use App\EventSubscriber\TokenSubscriber;
 use League\Fractal\TransformerAbstract;
 use Symfony\Component\HttpFoundation\RequestStack;
 
