@@ -258,7 +258,7 @@ class PlayerLoginController extends Controller
             $token = new Token();
             $token->generateRandomToken();
             $token->setPlayer($player);
-            $token->setExpireAt(new \DateTime());
+            $token->setExpireAt(new \DateTime('+30 days'));
 
             $this->getDoctrine()->getManager()->persist($token);
             $this->getDoctrine()->getManager()->flush();
